@@ -27,7 +27,7 @@
 
 <!-- begin ui script -->
 <script>
-	// debug var
+	// app object
 	var app = {name: "", debug: false};
 
 	app.init = function(n, d) {
@@ -114,6 +114,7 @@
 		ui.volSlider.addEventListener("change", media.changeVolFunction, false);
 	};
 
+	// ui functions
 	ui.updatePlay = function() {
 		if (media.play)
 			ui.playPauseBtn.value = "pause";

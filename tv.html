@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+<!-- begin user interface -->
+	<div>
+		<div>
+			<video controls id="video">
+			<source src="video/The Best of Molecular Gastronomy at MolecularRecipes.com.mp4" type="video/mp4">
+			your browser does not support the video tag.
+			</video>/iframe>
+		</div>
+	</div>
+<!-- end user interface -->
+
+<!-- begin third-party lib -->
+<script src="http://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+<!-- end third-party lib -->
+
+<!-- begin ui script -->
+<script>
+	//=================================================================
+	// app object
+	var app = {name: "", debug: false};
+
+	app.init = function(n, d) {
+		app.name = n;
+		app.debug = d;
+	};
+
+	//=================================================================
+	// ui object
+	var ui = {};
+
+	ui.init = function() {
+		ui.videoCtrl = document.getElementById("video");
+		
+		ui.registerEvents();
+	};
+
+	// register ui events
+	ui.registerEvents = function() {
+		ui.videoCtrl.addEventListener('volumechange', media.changeVolumeFunction, false);
+		ui.videoCtrl.addEventListener('play', media.playPauseFunction, false);
+		ui.videoCtrl.addEventListener('pause', media.playPauseFunction, false);
+	};
+
+	// ui functions
+	ui.updatePlayFunction = function() {
+		console.log("ui.updatePlayFunction");
+		if (media.play)
+			ui.videoCtrl.play();
+		else
+			ui.videoCtrl.pause();
+	};
+
+	ui.updateVolFunction = function() {
+		var vol = media.vol / 100.0;
+		
+		if (app.debug)
+			console.log(vol);
+
+		ui.videoCtrl.volume = vol;
+	};
+
+	//=================================================================
+	// media object
+	var media = {vol: 50, play: false};
+
+	// media init
+	media.init = function(v, p) {
+		media.vol = v;
+		media.play = p;
+	};
+
+	// media function
+	media.changeVolumeFunction = function() {
+		if (app.debug)
+			console.log("ui.videoCtrl.volume: " + ui.videoCtrl.volume);
+		
+		var vol = parseInt(ui.videoCtrl.volume * 100);
+
+		if (app.debug)
+			console.log("vol: " + vol);
+
+		if (vol === media.vol)
+			return;
+
+		media.vol = vol;
+		backEnd.send("vol", vol);
+	};
+
+	media.playPauseFunction = function() {
+		if (app.debug)
+			console.log("media.playPauseFunction");
+
+		var play = !ui.videoCtrl.paused;
+
+		if (app.debug)
+			console.log("play: " + play);
+
+		if (play === media.play)
+			return;
+
+		media.play = !media.play;
+		backEnd.send("play", media.play);
+	};
+
+	//=================================================================
+	// backEnd object
+	var backEnd = {ref: null};
+
+	backEnd.init = function(url) {
+		backEnd.ref = new Firebase(url);
+
+		// register backEnd events
+		backEnd.ref.limitToLast(1).on('child_added', backEnd.receive); 
+	};
+
+	backEnd.send = function(a, v) {
+		backEnd.ref.push({from: app.name, attr: a, value: v});
+	};
+
+	backEnd.receive = function(snapshot) {
+		var data = snapshot.val();
+		if (data.from === app.name)
+			return;
+
+		if (app.debug)
+			console.log("backEnd.receive");
+		console.log(data.attr + ": " + data.value);
+		switch(data.attr) {
+			case 'vol':
+				media.vol = parseInt(data.value);
+				ui.updateVolFunction();
+				break;
+			case 'play':
+				media.play = data.value;
+				ui.updatePlayFunction();
+				break;
+		}
+	};
+	//=================================================================
+	// main
+	app.init('tv', true);
+	backEnd.init('https://blazing-heat-3187.firebaseio.com/');
+	media.init(100, false);	
+	ui.init();
+
+</script>
+<!-- end ui script -->
+</body>
+
+</html>
