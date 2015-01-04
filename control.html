@@ -51,7 +51,7 @@
 	media.increaseVolFunction = function() {
 		if (media.vol < 100) {
 			media.vol += 1;
-			ui.updateVol();
+			ui.updateVolFunction();
 			backEnd.send("vol", media.vol);
 		}
 		if (debug)
@@ -61,7 +61,7 @@
 	media.decreaseVolFunction = function() {
 		if (media.vol > 0) {
 			media.vol -= 1;
-			ui.updateVol();
+			ui.updateVolFunction();
 			backEnd.send("vol", media.vol);
 		}
 		if (debug)
@@ -82,7 +82,7 @@
 		
 		media.play = !media.play;
 
-		ui.updatePlay();
+		ui.updatePlayFunction();
 
 		backEnd.send("play", media.play);
 
@@ -100,8 +100,8 @@
 		ui.increaseVolBtn = document.getElementById("increaseVol");
 		ui.decreaseVolBtn = document.getElementById("decreaseVol");
 
-		ui.updateVol();
-		ui.updatePlay();
+		ui.updateVolFunction();
+		ui.updatePlayFunction();
 		
 		ui.registerEvents();
 	};
@@ -115,14 +115,18 @@
 	};
 
 	// ui functions
-	ui.updatePlay = function() {
+	ui.updatePlayFunction = function() {
+		if (app.debug)
+			console.log("ui.updatePlayFunction");
 		if (media.play)
 			ui.playPauseBtn.value = "pause";
 		else
 			ui.playPauseBtn.value = "play";
 	};
 
-	ui.updateVol = function() {
+	ui.updateVolFunction = function() {
+		if (app.debug)
+			console.log("ui.updateVolFunction");
 		ui.volSlider.value = media.vol;
 	};
 
@@ -138,22 +142,31 @@
 	};
 
 	backEnd.send = function(a, v) {
+		if (app.debug)
+			console.log("backEnd.send");
+
 		backEnd.ref.push({from: app.name, attr: a, value: v});
 	};
 
 	backEnd.receive = function(snapshot) {
 		var data = snapshot.val();
+
 		if (data.from === app.name)
 			return;
+
+		if (app.debug)
+			console.log("backEnd.receive");
+
+		console.log(data.attr + ": " + data.value);
 
 		switch(data.attr) {
 			case 'vol':
 				media.vol = parseInt(data.value);
-				ui.updateVol();
+				ui.updateVolFunction();
 				break;
 			case 'play':
 				media.play = data.value;
-				ui.updatePlay();
+				ui.updatePlayFunction();
 				break;
 		}
 	};
@@ -162,7 +175,7 @@
 	// main
 	app.init('remote', true);
 	backEnd.init('https://blazing-heat-3187.firebaseio.com/');
-	media.init(100, false);	
+	media.init(50, false);	
 	ui.init();
 
 	//=================================================================
@@ -170,9 +183,9 @@
 	//backEnd.ref.push({from: 'inject', attr: 'vol', value: 67});
 	//backEnd.ref.push({from: 'inject', attr: 'play', value: true});
 
-
 </script>
 <!-- end ui script -->
+
 </body>
 
 </html>

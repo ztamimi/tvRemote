@@ -10,7 +10,7 @@
 			<video controls id="video">
 			<source src="video/The Best of Molecular Gastronomy at MolecularRecipes.com.mp4" type="video/mp4">
 			your browser does not support the video tag.
-			</video>/iframe>
+			</video>
 		</div>
 	</div>
 <!-- end user interface -->
@@ -36,20 +36,25 @@
 
 	ui.init = function() {
 		ui.videoCtrl = document.getElementById("video");
-		
+
+		// init media		
+		media.updateVolumeFunction();
+		media.updatePlayFunction();
+
 		ui.registerEvents();
 	};
 
 	// register ui events
 	ui.registerEvents = function() {
-		ui.videoCtrl.addEventListener('volumechange', media.changeVolumeFunction, false);
-		ui.videoCtrl.addEventListener('play', media.playPauseFunction, false);
-		ui.videoCtrl.addEventListener('pause', media.playPauseFunction, false);
+		ui.videoCtrl.addEventListener('volumechange', media.updateVolumeFunction, false);
+		ui.videoCtrl.addEventListener('play', media.updatePlayFunction, false);
+		ui.videoCtrl.addEventListener('pause', media.updatePlayFunction, false);
 	};
 
 	// ui functions
 	ui.updatePlayFunction = function() {
-		console.log("ui.updatePlayFunction");
+		if (app.debug)
+			console.log("ui.updatePlayFunction");
 		if (media.play)
 			ui.videoCtrl.play();
 		else
@@ -57,6 +62,8 @@
 	};
 
 	ui.updateVolFunction = function() {
+		if (app.debug)
+			console.log("ui.updateVolFunction");
 		var vol = media.vol / 100.0;
 		
 		if (app.debug)
@@ -76,9 +83,11 @@
 	};
 
 	// media function
-	media.changeVolumeFunction = function() {
+	media.updateVolumeFunction = function() {
 		if (app.debug)
-			console.log("ui.videoCtrl.volume: " + ui.videoCtrl.volume);
+			console.log("media.updatePlayFunction");
+		if (app.debug)
+			console.log("videoCtrl.volume: " + ui.videoCtrl.volume);
 		
 		var vol = parseInt(ui.videoCtrl.volume * 100);
 
@@ -92,9 +101,9 @@
 		backEnd.send("vol", vol);
 	};
 
-	media.playPauseFunction = function() {
+	media.updatePlayFunction = function() {
 		if (app.debug)
-			console.log("media.playPauseFunction");
+			console.log("media.updatePlayFunction");
 
 		var play = !ui.videoCtrl.paused;
 
@@ -120,6 +129,9 @@
 	};
 
 	backEnd.send = function(a, v) {
+		if (app.debug)
+			console.log("backEnd.send");
+
 		backEnd.ref.push({from: app.name, attr: a, value: v});
 	};
 
