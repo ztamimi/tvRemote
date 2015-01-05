@@ -5,6 +5,11 @@
 
 <body>
 <!-- begin user interface -->
+        <div>
+		<div><input type="text" value="ztamimi@kent.edu" id="token"></div>
+		<div><input type="button" value="signUp" id="signUp"></div>
+                <div><input type="button" value="signIn" id="signIn"></div>
+	</div>
 	<div>
 		<div>
 			<video controls id="video">
@@ -35,9 +40,15 @@
 	var ui = {};
 
 	ui.init = function() {
+                // main
 		ui.videoCtrl = document.getElementById("video");
 
-		// init media		
+                // connect
+		ui.tokenInput = document.getElementById("token");
+		ui.signUpBtn = document.getElementById("signUp");
+		ui.signInBtn = document.getElementById("signIn");
+
+                // init media		
 		media.updateVolumeFunction();
 		media.updatePlayFunction();
 
@@ -49,6 +60,11 @@
 		ui.videoCtrl.addEventListener('volumechange', media.updateVolumeFunction, false);
 		ui.videoCtrl.addEventListener('play', media.updatePlayFunction, false);
 		ui.videoCtrl.addEventListener('pause', media.updatePlayFunction, false);
+
+                // connect
+		ui.signUpBtn.addEventListener("click", ui.signUpFunction, false);
+                ui.signInBtn.addEventListener("click", ui.signInFunction, false);                
+
 	};
 
 	// ui functions
@@ -70,6 +86,16 @@
 			console.log(vol);
 
 		ui.videoCtrl.volume = vol;
+	};
+
+	ui.signUpFunction = function() {
+		var token = ui.tokenInput.value;
+		backEnd.signUp(token);
+	};
+        
+        ui.signInFunction = function() {
+		var token = ui.tokenInput.value;
+		backEnd.signIn(token);
 	};
 
 	//=================================================================
@@ -120,12 +146,14 @@
 	//=================================================================
 	// backEnd object
 	var backEnd = {ref: null};
+        
+        backEnd.user = {email: "", password: ""};
 
 	backEnd.init = function(url) {
 		backEnd.ref = new Firebase(url);
 
 		// register backEnd events
-		backEnd.ref.limitToLast(1).on('child_added', backEnd.receive); 
+		backEnd.ref.limitToLast(1).on('child_added', backEnd.receive);
 	};
 
 	backEnd.send = function(a, v) {
@@ -154,6 +182,55 @@
 				break;
 		}
 	};
+	
+        backEnd.signUp = function(token) {
+                if (app.debug)
+                    console.log("sign up");
+                
+                backEnd.user.email = token;
+                backEnd.user.password = token;
+                
+                backEnd.ref.createUser(backEnd.user, backEnd.signUpCallback);
+        };
+        
+        backEnd.signIn = function(token) {
+                if (app.debug)
+                    console.log("sign in");
+                
+                backEnd.user.email = token;
+                backEnd.user.password = token;
+                
+                backEnd.auth();
+        };
+        
+	backEnd.auth = function() {
+                if (app.debug)
+                    console.log("auth");
+                
+                backEnd.ref.authWithPassword(backEnd.user, backEnd.authCallback);
+	};
+        
+        backEnd.signUpCallback = function(error) {
+                if (error === null) {
+                        console.log("User created successfully");
+                        backEnd.auth();
+                }
+                else
+                    console.log("Error creating user:", error);
+        };
+        
+	backEnd.authCallback = function(error, authData) {
+
+		if (app.debug)
+			console.log("authCallback");
+
+		if (error) {
+			console.log("Failed to login " + error);
+			return;
+		}
+		
+		console.log("authData " + authData);
+	}
 	//=================================================================
 	// main
 	app.init('tv', true);

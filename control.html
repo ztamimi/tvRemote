@@ -6,6 +6,10 @@
 <body>
 <!-- begin user interface -->
 	<div>
+		<div><input type="text" value="" id="token"></div>
+		<div><input type="button" value="connect" id="connect"></div>
+	</div>
+	<div>
 		<div>
 			<div><input type="button" value="previous" id="previousMedia"></div>
 			<div><input type="button" value="play" id="playPause"></div>
@@ -95,6 +99,7 @@
 	var ui = {volSlider: null, playPauseBtn: null};
 
 	ui.init = function() {
+		// main
 		ui.volSlider = document.getElementById("vol");
 		ui.playPauseBtn = document.getElementById("playPause");
 		ui.increaseVolBtn = document.getElementById("increaseVol");
@@ -102,16 +107,24 @@
 
 		ui.updateVolFunction();
 		ui.updatePlayFunction();
+
+		// connect
+		ui.tokenInput = document.getElementById("token");
+		ui.connectBtn = document.getElementById("connect");
 		
 		ui.registerEvents();
 	};
 
 	// register ui events
 	ui.registerEvents = function() {
+		// main
 		ui.playPauseBtn.addEventListener("click", media.playPauseFunction, false);
 		ui.increaseVolBtn.addEventListener("click", media.increaseVolFunction, false);
 		ui.decreaseVolBtn.addEventListener("click", media.decreaseVolFunction, false);
 		ui.volSlider.addEventListener("change", media.changeVolFunction, false);
+
+		// connect
+		ui.connectBtn.addEventListener("click", ui.connectFunction, false);
 	};
 
 	// ui functions
@@ -130,12 +143,22 @@
 		ui.volSlider.value = media.vol;
 	};
 
+	ui.connectFunction = function() {
+		var token = ui.tokenInput.value;
+		backEnd.auth(token);
+	};
+
 	//=================================================================
 	// backEnd object
 	var backEnd = {ref: null};
 
-	backEnd.init = function(url) {
-		backEnd.ref = new Firebase(url);
+        backEnd.user = {
+                email: "",
+                password: ""
+        };
+        
+        backEnd.init = function(url) {
+                backEnd.ref = new Firebase(url);
 
 		// register backEnd events
 		backEnd.ref.limitToLast(1).on('child_added', backEnd.receive); 
@@ -169,8 +192,29 @@
 				ui.updatePlayFunction();
 				break;
 		}
+            };
+       
+	backEnd.auth = function(token) {
+                backEnd.user.email = token;
+                backEnd.user.password = token;
+                
+                if (app.debug)
+                    console.log("auth");
+                backEnd.ref.authWithPassword(backEnd.user, backEnd.authCallback);
 	};
+        
+	backEnd.authCallback = function(error, authData) {
 
+		if (app.debug)
+			console.log("authCallback");
+
+		if (error) {
+			console.log("Failed to login " + error);
+			return;
+		}
+		
+		console.log("authData " + authData);
+	}
 	//=================================================================
 	// main
 	app.init('remote', true);
