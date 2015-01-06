@@ -5,6 +5,13 @@
 
 <body>
 <!-- begin user interface -->
+        <div>
+                <div>
+                        <input type="text" id="token" value="">
+                        <input type="button" id="connect" value="connect">
+                </div>
+        </div>
+
 	<div>
 		<div>
 			<div><input type="button" value="previous" id="previousMedia"></div>
@@ -28,15 +35,19 @@
 <!-- begin ui script -->
 <script>
 	// app object
-	var app = {name: "", debug: false};
+	var app = {name: "", debug: false, token: ""};
 
 	app.init = function(n, d) {
 		app.name = n;
 		app.debug = d;
+                if (app.debug)
+                    app.token = "ABC123";
+                //app.generateToken();
 	};
-		
-	var debug = true;
-
+	
+        app.setTokenFunction = function(t) {
+                app.token = t;
+        };
 	//=================================================================
 	// media object
 	var media = {vol: 50, play: false};
@@ -52,28 +63,24 @@
 		if (media.vol < 100) {
 			media.vol += 1;
 			ui.updateVolFunction();
-			backEnd.send("vol", media.vol);
+			backEnd.send({"vol": media.vol});
 		}
-		if (debug)
-			console.log("media.vol: " + media.vol);
 	};
 
 	media.decreaseVolFunction = function() {
 		if (media.vol > 0) {
 			media.vol -= 1;
 			ui.updateVolFunction();
-			backEnd.send("vol", media.vol);
+			backEnd.send({"vol": media.vol});
 		}
-		if (debug)
-			console.log("media.vol: " + media.vol);
 	};
 
 	media.changeVolFunction = function() {
-		if (debug)
+		if (app.debug)
 			console.log("vol changed: " + ui.volSlider.value);
 
 		media.vol = parseInt(ui.volSlider.value);
-		backEnd.send("vol", media.vol);
+		backEnd.send({"vol": media.vol});
 	};
 
 	// media play/pause function
@@ -84,10 +91,7 @@
 
 		ui.updatePlayFunction();
 
-		backEnd.send("play", media.play);
-
-		if (debug)
-			console.log("media.play: " + media.play);
+		backEnd.send({"play": media.play});
 	};
 
 	//=================================================================
@@ -99,9 +103,10 @@
 		ui.playPauseBtn = document.getElementById("playPause");
 		ui.increaseVolBtn = document.getElementById("increaseVol");
 		ui.decreaseVolBtn = document.getElementById("decreaseVol");
-
-		ui.updateVolFunction();
-		ui.updatePlayFunction();
+                
+                // token
+                ui.tokenInput = document.getElementById("token");
+                ui.connectBtn = document.getElementById("connect");
 		
 		ui.registerEvents();
 	};
@@ -112,6 +117,8 @@
 		ui.increaseVolBtn.addEventListener("click", media.increaseVolFunction, false);
 		ui.decreaseVolBtn.addEventListener("click", media.decreaseVolFunction, false);
 		ui.volSlider.addEventListener("change", media.changeVolFunction, false);
+         	ui.connectBtn.addEventListener("click", ui.setTokenFunction, false);
+
 	};
 
 	// ui functions
@@ -129,43 +136,61 @@
 			console.log("ui.updateVolFunction");
 		ui.volSlider.value = media.vol;
 	};
+        
+        ui.setTokenFunction = function() {
+                var t = ui.tokenInput.value;
+                app.setTokenFunction(t);
+        };
 
 	//=================================================================
 	// backEnd object
 	var backEnd = {ref: null};
 
 	backEnd.init = function(url) {
+                url += 'tvRemoteApp/';
+                url += app.token;
+                url += '/';
+                                
 		backEnd.ref = new Firebase(url);
+               
+                backEnd.wRef = backEnd.ref.child(app.name);
+		backEnd.ref = new Firebase(url);
+                
+                var other = "";
+                if (app.name === "tv")
+                        other = "remote";
+                else
+                        other = "tv";
+                backEnd.rRef = backEnd.ref.child(other);
 
 		// register backEnd events
-		backEnd.ref.limitToLast(1).on('child_added', backEnd.receive); 
+		backEnd.rRef.on('child_added', backEnd.receive); 
+          	backEnd.rRef.on('child_changed', backEnd.receive); 
 	};
 
-	backEnd.send = function(a, v) {
+	backEnd.send = function(obj) {
 		if (app.debug)
-			console.log("backEnd.send");
+			console.log("backEnd.send: " + obj);
 
-		backEnd.ref.push({from: app.name, attr: a, value: v});
+		backEnd.wRef.update(obj);
 	};
 
 	backEnd.receive = function(snapshot) {
-		var data = snapshot.val();
+		var value = snapshot.val();
+                var key = snapshot.key();
 
-		if (data.from === app.name)
-			return;
-
-		if (app.debug)
+		if (app.debug) {
 			console.log("backEnd.receive");
+                        console.log(key + ": " + value);
+                }
 
-		console.log(data.attr + ": " + data.value);
-
-		switch(data.attr) {
+		switch(key) {
 			case 'vol':
-				media.vol = parseInt(data.value);
+				media.vol = parseInt(value);
 				ui.updateVolFunction();
 				break;
 			case 'play':
-				media.play = data.value;
+				media.play = value;
 				ui.updatePlayFunction();
 				break;
 		}
@@ -173,14 +198,18 @@
 
 	//=================================================================
 	// main
-	app.init('remote', true);
-	backEnd.init('https://blazing-heat-3187.firebaseio.com/');
-	media.init(50, false);	
 	ui.init();
+	media.init(100, false);	
+        
+        app.init('remote', true);
+	backEnd.init('https://blazing-heat-3187.firebaseio.com/');
 
 	//=================================================================
 	// injection
-	//backEnd.ref.push({from: 'inject', attr: 'vol', value: 67});
+        otherRef = backEnd.rRef;
+        otherRef.update({"vol": 30});
+        otherRef.update({"play": true});
+
 	//backEnd.ref.push({from: 'inject', attr: 'play', value: true});
 
 </script>
