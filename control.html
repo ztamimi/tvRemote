@@ -1,56 +1,148 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
+<title>controller</title>
 </head>
 
 <body>
 <!-- begin user interface -->
-        <div>
-                <div>
-                        <input type="text" id="token" value="">
+        <!-- ################################################ -->
+        <div data-role="page" id="welcome">
+                <header data-role="header">
+                        <h1>Remote</h1>
+                </header>
+                <div data-role="content">
+                    <p>To start enter the token and press connect.</p>
+                    <form method="" action="">
+                        <label for="token">Token</label>
+                        <input type="text" id="token" value="" placeholder="Your Token...">
                         <input type="button" id="connect" value="connect">
+                    </form>
                 </div>
+                <footer data-role="footer" data-position="fixed">
+                    <nav data-role="navbar">
+                        <ul>
+                            <li><a data-icon="home" href="#home"></a></li>
+                            <li><a data-icon="info" href="#help"></a></li>
+                            <li><a data-icon="power" href="#power"></a></li>
+                        </ul>
+                    </nav>
+                </footer>
         </div>
+        
+        <!-- ################################################ -->
+	<div data-role="page" id="remote">
+                <header data-role="header">
+                        <h1>Remote</h1>
+                </header>
+            
+		<form method="" action="" data-role="content">
+                    <div data-role="fieldcontain">
+			<input type="button" value="previous" id="previousMedia">
+			<input type="button" value="play" id="playPause">
+			<input type="button" value="next" id="nextMedia">
+                    </div>
+                    <!--
+                    <div data-role="fieldcontain">
+                        <label for="vol">volume: </label>
+                        <input type="range" value="100" id="volSlider" min="0" max="100" data-highlight="true" data-mini="true" style="display: none !important">
+                    </div>
+                    -->
+                    <div data-role="fieldcontain">
+                        <label for="vol">volume: </label>
+                        <input type="number" value="0" id="vol" min="0" max="100">
+                    </div>
+		</form>
 
-	<div>
-		<div>
-			<div><input type="button" value="previous" id="previousMedia"></div>
-			<div><input type="button" value="play" id="playPause"></div>
-			<div><input type="button" value="next" id="nextMedia"></div>
-		</div>
-		
-		<div>
-			<div><input type="button" value="-" id="decreaseVol"></div>
-			<div><input type="range" value="50" id="vol" min="0" max="100" step=1></div>
-			<div><input type="button" value="+" id="increaseVol"></div>
-		</div>
-
+                <footer data-role="footer" data-position="fixed">
+                    <nav data-role="navbar">
+                        <ul>
+                            <li><a data-icon="home" href="#welcome"></a></li>
+                            <li><a data-icon="info" href="#help"></a></li>
+                            <li><a data-icon="power" href="#power"></a></li>
+                        </ul>
+                    </nav>
+                </footer>
 	</div>
 <!-- end user interface -->
 
 <!-- begin third-party lib -->
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 <script src="http://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
 <!-- end third-party lib -->
 
 <!-- begin ui script -->
 <script>
-	// app object
+	//=================================================================
+	// ui object
+	var ui = {};
+
+	ui.init = function() {
+                ui.tokenInput = $('#token');
+                ui.connectBtn = $('#connect');
+                ui.volInput = $('#vol').slider();
+                //ui.volInput = document.getElementById("vol");
+                ui.playPauseBtn = $('#playPause');
+                
+		ui.registerEvents();
+	};
+
+	// register ui events
+	ui.registerEvents = function() {
+                ui.connectBtn.on('click', ui.setTokenFunction);
+                ui.playPauseBtn.on('click', media.playPauseFunction);
+                ui.volInput.on('change', media.changeVolFunction);
+	};
+        
+
+	// ui functions
+	ui.updatePlayFunction = function() {
+		if (app.debug)
+			console.log("ui.updatePlayFunction");
+                //console.log(evt.data.play);
+		if (media.play)
+			ui.playPauseBtn.val("pause");
+		else 
+			ui.playPauseBtn.val("play");
+                    
+                ui.playPauseBtn.button("refresh");
+        };
+
+	ui.updateVolFunction = function() {
+		if (app.debug)
+			console.log("ui.updateVolFunction");
+		ui.volInput.val(media.vol);
+                ui.volInput.slider('refresh');
+	};
+        
+        ui.setTokenFunction = function(evt) {
+                var t = ui.tokenInput.val();
+                app.setTokenFunction(t);
+        };
+
+        ui.slide = function() {
+                $.mobile.changePage("#remote", {transition: "slide", changeHash: false});
+        };
+	//=================================================================
+        // app object
 	var app = {name: "", debug: false, token: ""};
 
 	app.init = function(n, d) {
 		app.name = n;
-		app.debug = d;
-                if (app.debug)
-                    app.token = "ABC123";
-                //app.generateToken();
+		app.debug = d;                
 	};
 	
         app.setTokenFunction = function(t) {
                 app.token = t;
+                backEnd.setToken();
         };
 	//=================================================================
 	// media object
-	var media = {vol: 50, play: false};
+	var media = {vol: 50, play: false};        
 
 	// media init function
 	media.init = function(v, p) {
@@ -58,104 +150,42 @@
 		media.play = p;
 	};
 
-	// media vol functions
-	media.increaseVolFunction = function() {
-		if (media.vol < 100) {
-			media.vol += 1;
-			ui.updateVolFunction();
-			backEnd.send({"vol": media.vol});
-		}
-	};
-
-	media.decreaseVolFunction = function() {
-		if (media.vol > 0) {
-			media.vol -= 1;
-			ui.updateVolFunction();
-			backEnd.send({"vol": media.vol});
-		}
-	};
-
 	media.changeVolFunction = function() {
 		if (app.debug)
-			console.log("vol changed: " + ui.volSlider.value);
+			console.log("vol changed");
 
-		media.vol = parseInt(ui.volSlider.value);
+		media.vol = parseInt(ui.volInput.val());
+                
 		backEnd.send({"vol": media.vol});
 	};
 
 	// media play/pause function
-	media.playPauseFunction = function() {
-		var btn = document.getElementById("playPause");
-		
+	media.playPauseFunction = function() {	
+                if (app.debug)
+                        console.log("media.playPauseFunction");
+
 		media.play = !media.play;
-
-		ui.updatePlayFunction();
-
+                
+                ui.updatePlayFunction();
+                
 		backEnd.send({"play": media.play});
 	};
 
 	//=================================================================
-	// ui object
-	var ui = {volSlider: null, playPauseBtn: null};
-
-	ui.init = function() {
-		ui.volSlider = document.getElementById("vol");
-		ui.playPauseBtn = document.getElementById("playPause");
-		ui.increaseVolBtn = document.getElementById("increaseVol");
-		ui.decreaseVolBtn = document.getElementById("decreaseVol");
-                
-                // token
-                ui.tokenInput = document.getElementById("token");
-                ui.connectBtn = document.getElementById("connect");
-		
-		ui.registerEvents();
-	};
-
-	// register ui events
-	ui.registerEvents = function() {
-		ui.playPauseBtn.addEventListener("click", media.playPauseFunction, false);
-		ui.increaseVolBtn.addEventListener("click", media.increaseVolFunction, false);
-		ui.decreaseVolBtn.addEventListener("click", media.decreaseVolFunction, false);
-		ui.volSlider.addEventListener("change", media.changeVolFunction, false);
-         	ui.connectBtn.addEventListener("click", ui.setTokenFunction, false);
-
-	};
-
-	// ui functions
-	ui.updatePlayFunction = function() {
-		if (app.debug)
-			console.log("ui.updatePlayFunction");
-		if (media.play)
-			ui.playPauseBtn.value = "pause";
-		else
-			ui.playPauseBtn.value = "play";
-	};
-
-	ui.updateVolFunction = function() {
-		if (app.debug)
-			console.log("ui.updateVolFunction");
-		ui.volSlider.value = media.vol;
-	};
-        
-        ui.setTokenFunction = function() {
-                var t = ui.tokenInput.value;
-                app.setTokenFunction(t);
-        };
-
-	//=================================================================
 	// backEnd object
-	var backEnd = {ref: null};
+	var backEnd = {};
 
 	backEnd.init = function(url) {
-                url += 'tvRemoteApp/';
-                url += app.token;
-                url += '/';
+                backEnd.url = url;
+        };
+        
+        backEnd.setToken = function(t) {
+                var url = backEnd.url + ('tvRemoteApp/' + app.token + '/');
                                 
 		backEnd.ref = new Firebase(url);
                
                 backEnd.wRef = backEnd.ref.child(app.name);
 		backEnd.ref = new Firebase(url);
-                
                 var other = "";
                 if (app.name === "tv")
                         other = "remote";
@@ -165,7 +195,8 @@
 
 		// register backEnd events
 		backEnd.rRef.on('child_added', backEnd.receive); 
-          	backEnd.rRef.on('child_changed', backEnd.receive); 
+          	backEnd.rRef.on('child_changed', backEnd.receive);
+                backEnd.rRef.once('value', ui.slide);
 	};
 
 	backEnd.send = function(obj) {
@@ -206,9 +237,9 @@
 
 	//=================================================================
 	// injection
-        otherRef = backEnd.rRef;
-        otherRef.update({"vol": 30});
-        otherRef.update({"play": true});
+        //otherRef = backEnd.rRef;
+        //otherRef.update({"vol": 30});
+        //otherRef.update({"play": true});
 
 	//backEnd.ref.push({from: 'inject', attr: 'play', value: true});
 

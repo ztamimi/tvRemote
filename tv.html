@@ -34,9 +34,7 @@
 		app.name = n;
 		app.debug = d;
                 // generate token
-                if (app.debug)
-                    app.token = "ABC123";
-                //app.generateToken();
+                app.generateToken();
 	};
 
         app.generateToken = function() {
@@ -205,9 +203,9 @@
         ui.init();
         
         // inject
-        var otherRef = backEnd.rRef;
-        otherRef.update({"vol": 10});
-        otherRef.update({"play": true});
+        //var otherRef = backEnd.rRef;
+        //otherRef.update({"vol": 10});
+        //otherRef.update({"play": true});
 
 
         //otherRef.update({"test": 5});
