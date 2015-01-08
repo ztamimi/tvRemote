@@ -30,11 +30,15 @@
 	// app object
 	var app = {name: "", debug: false, token: ""};
 
-	app.init = function(n, d) {
+	app.init = function(n, d, url) {
 		app.name = n;
 		app.debug = d;
                 // generate token
                 app.generateToken();
+                backEnd.init(url, app.token);
+                media.init(10, true);	
+                ui.init();
+                ui.setTokenFunction(app.token);
 	};
 
         app.generateToken = function() {
@@ -66,6 +70,10 @@
                 
                 // token
                 ui.setTokenFunction();
+                
+                // init vol and play
+                media.updatePlayFunction();
+                media.updateVolumeFunction();
 
 		ui.registerEvents();
 	};
@@ -77,6 +85,11 @@
 		ui.videoCtrl.addEventListener('pause', media.updatePlayFunction, false);
 	};
 
+        function testFunc() {
+            console.log("volume: " + ui.videoCtrl.volume);
+            console.log("is paused: " + ui.videoCtrl.paused);
+        };
+        
 	// ui functions
 	ui.updatePlayFunction = function() {
 		if (app.debug)
@@ -98,14 +111,12 @@
 		ui.videoCtrl.volume = vol;
 	};
 
-        ui.setTokenFunction = function() {
-                if (app.debug)
-                        console.log(app.token);
-                ui.tokenInput.value = app.token;
+        ui.setTokenFunction = function(t) {
+                ui.tokenInput.value = t;
         };
 	//=================================================================
 	// media object
-	var media = {vol: 50, play: false};
+	var media = {};
 
 	// media init
 	media.init = function(v, p) {
@@ -144,10 +155,8 @@
 	// backEnd object
 	var backEnd = {ref: null};
 
-	backEnd.init = function(url) {
-                url += 'tvRemoteApp/';
-                url += app.token;
-                url += '/';
+	backEnd.init = function(url, token) {
+                url += ('tvRemoteApp/' + token + '/');
                                 
 		backEnd.ref = new Firebase(url);
                
@@ -197,10 +206,7 @@
       
 	//=================================================================
 	// main
-	app.init('tv', true);
-        backEnd.init('http://blazing-heat-3187.firebaseio.com/');
-	media.init(100, false);	
-        ui.init();
+	app.init('tv', true, 'http://blazing-heat-3187.firebaseio.com/');
         
         // inject
         //var otherRef = backEnd.rRef;
