@@ -53,7 +53,7 @@
                     -->
                     <div data-role="fieldcontain">
                         <label for="vol">volume: </label>
-                        <input type="number" value="0" id="vol" min="0" max="100">
+                        <input type="number" value="100" id="vol" min="0" max="100">
                     </div>
 		</form>
 
@@ -86,7 +86,7 @@
                 ui.connectBtn = $('#connect');
                 ui.volInput = $('#vol').slider();
                 ui.playPauseBtn = $('#playPause');
-                
+                                
 		ui.registerEvents();
 	};
 
@@ -100,9 +100,6 @@
 
 	// ui functions
 	ui.updatePlayFunction = function() {
-		if (app.debug)
-			console.log("ui.updatePlayFunction");
-                //console.log(evt.data.play);
 		if (media.play)
 			ui.playPauseBtn.val("pause");
 		else 
@@ -112,8 +109,6 @@
         };
 
 	ui.updateVolFunction = function() {
-		if (app.debug)
-			console.log("ui.updateVolFunction");
 		ui.volInput.val(media.vol);
                 ui.volInput.slider('refresh');
 	};
@@ -132,7 +127,8 @@
 
 	app.init = function(n, d) {
 		app.name = n;
-		app.debug = d;                
+		app.debug = d;
+                //backEnd.init(url);
 	};
 	
         app.setTokenFunction = function(t) {
@@ -141,7 +137,7 @@
         };
 	//=================================================================
 	// media object
-	var media = {vol: 50, play: false};        
+	var media = {};        
 
 	// media init function
 	media.init = function(v, p) {
@@ -183,19 +179,21 @@
                                 
 		backEnd.ref = new Firebase(url);
                
-                backEnd.wRef = backEnd.ref.child(app.name);
-		backEnd.ref = new Firebase(url);
+                //backEnd.wRef = backEnd.ref.child(app.name);
+		//backEnd.ref = new Firebase(url);
                 var other = "";
                 if (app.name === "tv")
                         other = "remote";
                 else
                         other = "tv";
-                backEnd.rRef = backEnd.ref.child(other);
-
+                //backEnd.rRef = backEnd.ref.child(other);
+                
+                
+                backEnd.rRef = backEnd.wRef = backEnd.ref;
 		// register backEnd events
 		backEnd.rRef.on('child_added', backEnd.receive); 
           	backEnd.rRef.on('child_changed', backEnd.receive);
-                backEnd.rRef.once('value', ui.slide);
+                backEnd.rRef.once('child_added', ui.slide);
 	};
 
 	backEnd.send = function(obj) {
@@ -216,20 +214,26 @@
 
 		switch(key) {
 			case 'vol':
-				media.vol = parseInt(value);
-				ui.updateVolFunction();
+				var vol = parseInt(value);
+                                if (vol !== media.vol) {
+                                        media.vol = vol;
+                                        ui.updateVolFunction();
+                                }
 				break;
 			case 'play':
-				media.play = value;
-				ui.updatePlayFunction();
+                                if (value !== media.play) {
+                                        media.play = value;
+                                        ui.updatePlayFunction();
+                                }
 				break;
 		}
 	};
 
 	//=================================================================
 	// main
-	ui.init();
 	media.init(100, false);	
+
+        ui.init();
         
         app.init('remote', true);
 	backEnd.init('https://blazing-heat-3187.firebaseio.com/');

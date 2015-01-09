@@ -42,8 +42,8 @@
 	};
 
         app.generateToken = function() {
-                var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
-                var string_length = 8;
+                var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ";//abcdefghiklmnopqrstuvwxyz";
+                var string_length = 3;
                 var randomstring = '';
                 for (var i=0; i<string_length; i++) {
                         var rnum = Math.floor(Math.random() * chars.length);
@@ -160,15 +160,18 @@
                                 
 		backEnd.ref = new Firebase(url);
                
-                backEnd.wRef = backEnd.ref.child(app.name);
+                //backEnd.wRef = backEnd.ref.child(app.name);
                 
                 var other = "";
                 if (app.name === "tv")
                         other = "remote";
                 else
                         other = "tv";
-                backEnd.rRef = backEnd.ref.child(other);
+                //backEnd.rRef = backEnd.ref.child(other);
                 
+                
+                backEnd.rRef = backEnd.wRef = backEnd.ref;
+
 		// register backEnd events
          	backEnd.rRef.on('child_added', backEnd.receive); 
 		backEnd.rRef.on('child_changed', backEnd.receive); 
@@ -192,14 +195,17 @@
                                 
 		switch(key) {
 			case 'vol':
-                                console.log("update vol");
-				media.vol = parseInt(value);
-				ui.updateVolFunction();
+				var vol = parseInt(value);
+                                if (vol !== media.vol) {
+                                        media.vol = vol;
+                                        ui.updateVolFunction();
+                                }
 				break;
 			case 'play':
-                                console.log("update play");
-				media.play = value;
-				ui.updatePlayFunction();
+                                if (value !== media.play) {
+                                        media.play = value;
+                                        ui.updatePlayFunction();
+                                }
 				break;
 		}
 	};
