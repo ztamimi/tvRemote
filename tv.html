@@ -11,17 +11,14 @@
                 </div>
         </div>
 	<div>
-		<div>
-			<video controls id="video">
-			<source src="video/The Best of Molecular Gastronomy at MolecularRecipes.com.mp4" type="video/mp4">
-			your browser does not support the video tag.
-			</video>
+		<div id="player">
 		</div>
 	</div>
 <!-- end user interface -->
 
 <!-- begin third-party lib -->
 <script src="http://cdn.firebase.com/js/client/2.0.4/firebase.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
 <!-- end third-party lib -->
 
 <!-- begin ui script -->
@@ -36,7 +33,7 @@
                 // generate token
                 app.generateToken();
                 backEnd.init(url, app.token);
-                media.init(10, true);	
+                media.init(-1, -1, -1);	
                 ui.init();
                 ui.setTokenFunction(app.token);
 	};
@@ -58,59 +55,101 @@
 	// ui object
 	var ui = {};
 
-	ui.init = function() {
-		ui.videoCtrl = document.getElementById("video");
-                
+	ui.init = function() {             
                 // token
                 ui.tokenInput = document.getElementById("token");
                 
-		// init media		
-		//media.updateVolumeFunction();
-		//media.updatePlayFunction();
+                ui.playList = ["3wtYaiFhANY", "J6kSeL_qWd4"];
                 
                 // token
                 ui.setTokenFunction();
                 
-                // init vol and play
-                media.updatePlayFunction();
-                media.updateVolumeFunction();
-
-		ui.registerEvents();
+                ui.registerEvents();
 	};
 
 	// register ui events
 	ui.registerEvents = function() {
-		ui.videoCtrl.addEventListener('volumechange', media.updateVolumeFunction, false);
-		ui.videoCtrl.addEventListener('play', media.updatePlayFunction, false);
-		ui.videoCtrl.addEventListener('pause', media.updatePlayFunction, false);
+	};
+        
+	// ui event handlers
+	function onYouTubeIframeAPIReady() {
+		ui.player = new YT.Player('player', {
+					width: 600, 
+					height: 400, 
+					videoId: 'M7lc1UVf-VE',
+	    				events: { 
+						'onReady': ui.onPlayerReady,
+						'onStateChange': ui.onStateChange
+					}
+		});
 	};
 
-        function testFunc() {
-            console.log("volume: " + ui.videoCtrl.volume);
-            console.log("is paused: " + ui.videoCtrl.paused);
-        };
-        
+	ui.onPlayerReady = function() {
+                ui.loadPlayList();
+	};
+
+	ui.onStateChange = function() {
+		var isPlaying = ui.player.getPlayerState();
+		
+                if (app.debug)
+			console.log("isPlaying: " + isPlaying);
+
+		if (isPlaying === 1) {
+                        if(!media.play)
+                                media.playFunction();
+                } 
+                else
+                        media.pauseFunction();
+		
+		var vol = ui.player.getVolume();
+	
+		if (app.debug)
+			console.log("volume: " + vol);
+
+		if (vol !== media.vol)
+			media.updateVolumeFunction(vol);
+                
+                var index = ui.player.getPlaylistIndex();
+                
+                if (index !== media.index)
+                        media.updatePlaylistIndex(index);
+	};
+
 	// ui functions
 	ui.updatePlayFunction = function() {
 		if (app.debug)
 			console.log("ui.updatePlayFunction");
 		if (media.play)
-			ui.videoCtrl.play();
+			ui.player.playVideo();
 		else
-			ui.videoCtrl.pause();
+			ui.player.pauseVideo();
 	};
 
 	ui.updateVolFunction = function() {
 		if (app.debug)
 			console.log("ui.updateVolFunction");
-		var vol = media.vol / 100.0;
+		var vol = media.vol;// / 100.0;
 		
 		if (app.debug)
 			console.log(vol);
 
-		ui.videoCtrl.volume = vol;
+		ui.player.setVolume(vol);
 	};
-
+        
+        ui.updatePlaylistIndexFunction = function() {
+                if (app.debug)
+                        console.log("ui.updatePlaylistIndexFunction");
+                    
+                ui.player.playVideoAt(media.index);
+        };
+        
+        ui.loadPlayList = function() {
+                if (app.debug)
+                        console.log("loadList");
+                ui.player.cuePlaylist(ui.playList);//, 0, 0, "large");
+        };
+        
+        // token
         ui.setTokenFunction = function(t) {
                 ui.tokenInput.value = t;
         };
@@ -119,38 +158,44 @@
 	var media = {};
 
 	// media init
-	media.init = function(v, p) {
+	media.init = function(v, p, i) {
 		media.vol = v;
 		media.play = p;
+                media.index = i;
 	};
 
 	// media function
-	media.updateVolumeFunction = function() {
+
+	media.updateVolumeFunction = function(vol) {
 		if (app.debug)
 			console.log("media.updateVolumeFunction");
 		
-		var vol = parseInt(ui.videoCtrl.volume * 100);
-
-		if (vol === media.vol)
-			return;
-
 		media.vol = vol;
 		backEnd.send({"vol": media.vol});
 	};
 
-	media.updatePlayFunction = function() {
+	media.playFunction = function() {
 		if (app.debug)
-			console.log("media.updatePlayFunction");
-
-		var play = !ui.videoCtrl.paused;
-
-		if (play === media.play)
-			return;
-
-		media.play = !media.play;
+			console.log("media.playFunction");
+                    
+		media.play = true;
 		backEnd.send({"play": media.play});
 	};
 
+	media.pauseFunction = function() {
+		if (app.debug)
+			console.log("media.pauseFunction");
+		media.play = false;
+		backEnd.send({"play": media.play});
+	};
+        
+        media.updatePlaylistIndex = function(index) {
+                if (app.debug)
+                        console.log("media.updatePlaylistIndex");
+                
+                media.index = index;
+                backEnd.send({"index": media.index});
+        };
 	//=================================================================
 	// backEnd object
 	var backEnd = {ref: null};
@@ -159,16 +204,6 @@
                 url += ('tvRemoteApp/' + token + '/');
                                 
 		backEnd.ref = new Firebase(url);
-               
-                //backEnd.wRef = backEnd.ref.child(app.name);
-                
-                var other = "";
-                if (app.name === "tv")
-                        other = "remote";
-                else
-                        other = "tv";
-                //backEnd.rRef = backEnd.ref.child(other);
-                
                 
                 backEnd.rRef = backEnd.wRef = backEnd.ref;
 
@@ -195,7 +230,7 @@
                                 
 		switch(key) {
 			case 'vol':
-				var vol = parseInt(value);
+				var vol = value;
                                 if (vol !== media.vol) {
                                         media.vol = vol;
                                         ui.updateVolFunction();
@@ -207,6 +242,13 @@
                                         ui.updatePlayFunction();
                                 }
 				break;
+                        
+                        case 'index':
+                                if (value !== media.index) {
+                                        media.index = value;
+                                        ui.updatePlaylistIndexFunction();
+                                }
+				break;
 		}
 	};
       
@@ -214,16 +256,6 @@
 	// main
 	app.init('tv', true, 'http://blazing-heat-3187.firebaseio.com/');
         
-        // inject
-        //var otherRef = backEnd.rRef;
-        //otherRef.update({"vol": 10});
-        //otherRef.update({"play": true});
-
-
-        //otherRef.update({"test": 5});
-
-        // end inject
-
 </script>
 <!-- end ui script -->
 </body>
