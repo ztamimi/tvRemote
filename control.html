@@ -113,9 +113,10 @@
                 ui.volInput.slider('refresh');
 	};
         
-        ui.setTokenFunction = function(evt) {
+        ui.setTokenFunction = function() {
                 var t = ui.tokenInput.val();
                 app.setTokenFunction(t);
+                ui.slide();
         };
         ui.slide = function() {
                 $.mobile.changePage("#remote", {transition: "slide", changeHash: false});
@@ -137,10 +138,11 @@
 	// media object
 	var media = {};        
 	// media init function
-	media.init = function(v, p, i) {
+	media.init = function(v, p, i, l) {
 		media.vol = v;
 		media.play = p;
                 media.index = i;
+                media.length = l;
 	};
 	media.changeVolFunction = function() {
 		if (app.debug)
@@ -164,7 +166,10 @@
                 if (app.debug)
                         console.log("media.previousMediaFunction");
                 
-                media.index -= 1;
+                if (!media.length)
+                    return;
+                
+                media.index = (media.index - 1) % media.length;
                 
                 backEnd.send({"index": media.index});
         };
@@ -173,7 +178,10 @@
                 if (app.debug)
                         console.log("media.nextMediaFunction");
                 
-                media.index += 1;
+                if (!media.length)
+                    return;
+                
+                media.index = (media.index + 1)% media.length;
                 
                 backEnd.send({"index": media.index});
         };
@@ -215,6 +223,7 @@
                                         ui.updateVolFunction();
                                 }
 				break;
+                                
 			case 'play':
                                 if (value !== media.play) {
                                         media.play = value;
@@ -227,11 +236,16 @@
                                         media.index = value;
                                 }
 				break;
+                                
+                        case 'length':
+                                if (value !== media.length) {
+                                    media.length = value;
+                                }
 		}
 	};
 	//=================================================================
 	// main
-	media.init(100, false, 0);	
+	media.init(100, false, 0, 0);	
         ui.init();
         
         app.init('remote', true);

@@ -13,6 +13,13 @@
 	<div>
 		<div id="player">
 		</div>
+                
+            <div>
+                <label for="url">url: </label>
+                <input type="url" id="url" placeholder="copy the url of a youtube video here ...  ">
+                <input type="button" id="addUrl" value="Add Video">
+                
+            </div>
 	</div>
 <!-- end user interface -->
 
@@ -33,7 +40,7 @@
                 // generate token
                 app.generateToken();
                 backEnd.init(url, app.token);
-                media.init(-1, -1, -1);	
+                media.init(-1, -1, -1, 0);	
                 ui.init();
                 ui.setTokenFunction(app.token);
 	};
@@ -58,8 +65,10 @@
 	ui.init = function() {             
                 // token
                 ui.tokenInput = document.getElementById("token");
+                ui.addUrlBtn = document.getElementById("addUrl");
+                ui.urlInput = document.getElementById("url");
                 
-                ui.playList = ["3wtYaiFhANY", "J6kSeL_qWd4"];
+                ui.playList = []; /*"3wtYaiFhANY", "J6kSeL_qWd4"*/
                 
                 // token
                 ui.setTokenFunction();
@@ -69,7 +78,25 @@
 
 	// register ui events
 	ui.registerEvents = function() {
+            ui.addUrlBtn.addEventListener("click", ui.addUrl, false);
 	};
+        
+        ui.addUrl = function() {
+            console.log("******************");
+            var url = ui.urlInput.value;
+            var temp = url.split("://")[1];
+            var site = temp.split("?")[0];
+            if (site.toLowerCase() !== "www.youtube.com/watch") {
+                console.log("invalid youtube url");
+                return;
+            }
+            var param = temp.split("=")[1];
+            param = param.split("&")[0];
+            console.log("param: " + param);
+            ui.playList.push(param);
+            media.updatePlayListLength(ui.playList.length);
+            ui.loadPlayList();
+        };
         
 	// ui event handlers
 	function onYouTubeIframeAPIReady() {
@@ -158,10 +185,11 @@
 	var media = {};
 
 	// media init
-	media.init = function(v, p, i) {
+	media.init = function(v, p, i, l) {
 		media.vol = v;
 		media.play = p;
                 media.index = i;
+                media.length = l;
 	};
 
 	// media function
@@ -196,6 +224,13 @@
                 media.index = index;
                 backEnd.send({"index": media.index});
         };
+        
+        media.updatePlayListLength = function(length) {
+            if (app.debug)
+                console.log("media.updatePlayListLength");
+            media.length = length;
+            backEnd.send({"length": media.length});
+        }
 	//=================================================================
 	// backEnd object
 	var backEnd = {ref: null};
