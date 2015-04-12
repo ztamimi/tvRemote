@@ -81,36 +81,72 @@
 	// ui object
 	var ui = {};
 	ui.init = function() {
-                ui.tokenInput = $('#token');
-                ui.connectBtn = $('#connect');
-                ui.volInput = $('#vol').slider();
-                ui.playPauseBtn = $('#playPause');
-                ui.previousMediaBtn = $('#previousMedia');
-                ui.nextMediaBtn = $('#nextMedia');
+            ui.tokenInput = $('#token');
+            ui.connectBtn = $('#connect');
+            ui.volInput = $('#vol').slider();
+            ui.playPauseBtn = $('#playPause');
+            ui.previousMediaBtn = $('#previousMedia');
+            ui.nextMediaBtn = $('#nextMedia');
                                 
-		ui.registerEvents();
+            ui.registerEvents();
 	};
 	// register ui events
 	ui.registerEvents = function() {
                 ui.connectBtn.on('click', ui.setTokenFunction);
-                ui.playPauseBtn.on('click', media.playPauseFunction);
-                ui.volInput.on('change', media.changeVolFunction);
-                ui.previousMediaBtn.on('click', media.previousMediaFunction);
-                ui.nextMediaBtn.on('click', media.nextMediaFunction);
+                ui.playPauseBtn.on('click', ui.updatePlayByUi);
+                ui.volInput.on('change', ui.updateVolumeByUi);
+                ui.previousMediaBtn.on('click', ui.updateIndexByUi);
+                ui.nextMediaBtn.on('click', ui.updateIndexByUi);
 	};
         
 	// ui functions
-	ui.updatePlayFunction = function() {
-		if (media.play)
-			ui.playPauseBtn.val("pause");
-		else 
-			ui.playPauseBtn.val("play");
+        ui.updatePlayByUi = function() {
+            
+            var playStatus = ui.playPauseBtn.val();
+            
+            if (playStatus === "play") {
+		ui.playPauseBtn.val("pause");
+                media.updatePlayByUi(true);
+            }
+            else {
+		ui.playPauseBtn.val("play");
+                media.updatePlayByUi(false);
+            }
                     
-                ui.playPauseBtn.button("refresh");
+            ui.playPauseBtn.button("refresh");
+            
         };
-	ui.updateVolFunction = function() {
-		ui.volInput.val(media.vol);
-                ui.volInput.slider('refresh');
+        
+        ui.updateVolumeByUi = function() {
+            var volume = parseInt(ui.volInput.val());
+            media.updateVolumeByUi(volume);
+        };
+        
+        ui.updateIndexByUi = function(evt) {
+            if (!evt)
+                evt = window.event;
+            var btn = evt.target;
+            
+            if (btn.id === "previousMedia")
+                var shift = -1;
+            else 
+                var shift = 1;
+            
+            media.updateIndexByUi(shift);
+        };
+        
+	ui.updatePlayByMedia = function(play) {
+            if (play)
+		ui.playPauseBtn.val("pause");
+            else 
+		ui.playPauseBtn.val("play");
+                    
+            ui.playPauseBtn.button("refresh");
+        };
+        
+	ui.updateVolumeByMedia = function(volume) {
+            ui.volInput.val(volume);
+            ui.volInput.slider('refresh');
 	};
         
         ui.setTokenFunction = function() {
@@ -118,6 +154,7 @@
                 app.setTokenFunction(t);
                 ui.slide();
         };
+        
         ui.slide = function() {
                 $.mobile.changePage("#remote", {transition: "slide", changeHash: false});
         };
@@ -134,114 +171,143 @@
                 app.token = t;
                 backEnd.setToken();
         };
+        
 	//=================================================================
+        //
 	// media object
-	var media = {};        
+	var media = {};
+        
 	// media init function
 	media.init = function(v, p, i, l) {
-		media.vol = v;
-		media.play = p;
-                media.index = i;
-                media.length = l;
+            media.vol = v;
+            media.play = p;
+            media.index = i;
+            media.length = l;
 	};
-	media.changeVolFunction = function() {
-		if (app.debug)
-			console.log("vol changed");
-		media.vol = parseInt(ui.volInput.val());
+        
+	media.updateVolumeByUi = function(volume) {
+            if (app.debug)
+                console.log("media.updateVolumeByUi called");
+            
+            if (media.vol === volume) {
+                console.log("inhibit cycle");
+                return;
+            }
+            
+            media.vol = volume;
                 
-		backEnd.send({"vol": media.vol});
+            backEnd.send({"vol": media.vol});
 	};
+        
 	// media play/pause function
-	media.playPauseFunction = function() {	
-                if (app.debug)
-                        console.log("media.playPauseFunction");
-		media.play = !media.play;
-                
-                ui.updatePlayFunction();
-                
-		backEnd.send({"play": media.play});
+	media.updatePlayByUi = function(play) {	
+            if (app.debug)
+                console.log("media.updatePlayByUi called");
+            
+            if (media.play === play) {
+                console.log("inhibit cycle");
+                return;
+            }
+            
+            media.play = play;
+
+            backEnd.send({"play": media.play});
 	};
         
-        media.previousMediaFunction = function() {
-                if (app.debug)
-                        console.log("media.previousMediaFunction");
+        media.updateIndexByUi = function(shift) {
+            if (app.debug)
+                console.log("media.updateIndexByUi");
                 
-                if (!media.length)
-                    return;
+            if (media.length < 2)
+                return;
+            
+            media.index = (media.index + shift) % media.length;
                 
-                media.index = (media.index - 1) % media.length;
-                
-                backEnd.send({"index": media.index});
+            backEnd.send({"index": media.index});
         };
         
-        media.nextMediaFunction = function() {
-                if (app.debug)
-                        console.log("media.nextMediaFunction");
-                
-                if (!media.length)
-                    return;
-                
-                media.index = (media.index + 1)% media.length;
-                
-                backEnd.send({"index": media.index});
+        media.updateByBackend = function(key, value) {
+            if (app.debug)
+                console.log("media.update called");
+            
+            switch(key) {
+		case 'vol':
+                    var vol = parseInt(value);
+                    if (vol !== media.vol) {
+                        media.vol = vol;
+                        ui.updateVolumeByMedia(media.vol);
+                    }
+                    break;
+                                
+		case 'play':
+                    if (value !== media.play) {
+                        media.play = value;
+                        ui.updatePlayByMedia(media.play);
+                    }
+                    break;
+                                
+                case 'index':
+                    if (value !== media.index) {
+                        media.index = value;
+                    }
+                    break;
+                                
+                case 'length':
+                    if (value !== media.length) {
+                        media.length = value;
+                        ui.updateLengthByMedia(media.length);
+                    }
+            }  
         };
+        
 	//=================================================================
 	// backEnd object
 	var backEnd = {};
+        
 	backEnd.init = function(url) {
-                backEnd.url = url;
+            backEnd.log = null;
+            backEnd.url = url;
         };
         
         backEnd.setToken = function(t) {
-                var url = backEnd.url + ('tvRemoteApp/' + app.token + '/');
+            var url = backEnd.url + ('tvRemoteApp/' + app.token + '/');
                                 
-		backEnd.ref = new Firebase(url);
+            backEnd.ref = new Firebase(url);
                
-                backEnd.rRef = backEnd.wRef = backEnd.ref;
-		// register backEnd events
-		backEnd.rRef.on('child_added', backEnd.receive); 
-          	backEnd.rRef.on('child_changed', backEnd.receive);
-                backEnd.rRef.once('child_added', ui.slide);
+            // register backEnd events
+            backEnd.ref.on('child_added', backEnd.receive); 
+            backEnd.ref.on('child_changed', backEnd.receive);
+            backEnd.ref.once('child_added', ui.slide);
 	};
+        
 	backEnd.send = function(obj) {
-		if (app.debug)
-			console.log("backEnd.send: " + obj);
-		backEnd.wRef.update(obj);
+            if (app.debug)
+		console.log("backEnd.send: " + JSON.stringify(obj));
+            
+            backEnd.log = obj;
+            
+            backEnd.ref.update(obj);
 	};
+        
 	backEnd.receive = function(snapshot) {
-		var value = snapshot.val();
-                var key = snapshot.key();
-		if (app.debug) {
-			console.log("backEnd.receive");
-                        console.log(key + ": " + value);
-                }
-		switch(key) {
-			case 'vol':
-				var vol = parseInt(value);
-                                if (vol !== media.vol) {
-                                        media.vol = vol;
-                                        ui.updateVolFunction();
-                                }
-				break;
-                                
-			case 'play':
-                                if (value !== media.play) {
-                                        media.play = value;
-                                        ui.updatePlayFunction();
-                                }
-				break;
-                                
-                        case 'index':
-                                if (value !== media.index) {
-                                        media.index = value;
-                                }
-				break;
-                                
-                        case 'length':
-                                if (value !== media.length) {
-                                    media.length = value;
-                                }
-		}
+            var value = snapshot.val();
+            var key = snapshot.key();
+            
+            if (app.debug) {
+		console.log("backEnd.receive");
+                //console.log(key + ": " + value);
+            }
+            
+            var obj = {};
+            obj[key] = value;
+            console.log("obj: " + JSON.stringify(obj));
+            //console.log("log: " + JSON.stringify(backEnd.log));
+            if (JSON.stringify(obj) == JSON.stringify(backEnd.log)) {
+                console.log("same data, ignore");
+                return;
+            }
+                
+            media.updateByBackend(key, value);
 	};
 	//=================================================================
 	// main

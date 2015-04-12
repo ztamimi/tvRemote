@@ -1,9 +1,4 @@
 <!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <html>
     <head>
         <title>TODO supply a title</title>
@@ -11,10 +6,57 @@ and open the template in the editor.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <select name="select" size="3">
-  <option value="value1">Value 1</option> 
-  <option value="value2" selected>Value 2</option>
-  <option value="value3">Value 3</option>
-</select>
+        <input type="text" id="myText" value="">
+        <br>
+        <input type="range" step="1" min="0" max="100" id="myNumber" value="0">
+        <br>
+        <input type="checkbox" checked="false" id="myCheck">
+        <br>
+        <input type="button" id="myButton" value="click">
+        
+        <script>
+            var ui = {};
+            
+            ui.init = function() {
+                ui.myText = document.getElementById("myText");
+                ui.myNumber = document.getElementById("myNumber");
+                ui.myCheck = document.getElementById("myCheck");
+                ui.myButton = document.getElementById("myButton");
+                
+                ui.myText.addEventListener("input", ui.edit, false);
+                ui.myNumber.addEventListener("change", ui.update, false);
+                ui.myCheck.addEventListener("change", ui.check, false);
+                ui.myButton.addEventListener("click", ui.click, false);
+                
+            };
+            
+            ui.click = function() {
+                console.log("button clicked");
+                //ui.myNumber.value = 100;
+                //ui.myText.value = "text was edited due to button";
+                if (ui.myCheck.checked)
+                    ui.myCheck.checked = false;
+                else
+                    ui.myCheck.checked = true;
+            };
+            
+            ui.edit = function() {
+                console.log("text was edited");
+                var text = ui.myText.value;
+                console.log(text);
+            };
+            
+            ui.update = function() {
+                console.log("slided was updated");
+            };
+            
+            ui.check = function() {
+                console.log("checkbox was updated");
+            };
+            
+            ui.init();
+            
+        </script>
+        
     </body>
 </html>
