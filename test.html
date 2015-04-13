@@ -3,60 +3,43 @@
     <head>
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">    </head>
     <body>
-        <input type="text" id="myText" value="">
-        <br>
-        <input type="range" step="1" min="0" max="100" id="myNumber" value="0">
-        <br>
-        <input type="checkbox" checked="false" id="myCheck">
-        <br>
-        <input type="button" id="myButton" value="click">
-        
-        <script>
-            var ui = {};
+        <div data-role="page" id="remote">
+                <header data-role="header">
+                        <h1>Remote</h1>
+                </header>
             
-            ui.init = function() {
-                ui.myText = document.getElementById("myText");
-                ui.myNumber = document.getElementById("myNumber");
-                ui.myCheck = document.getElementById("myCheck");
-                ui.myButton = document.getElementById("myButton");
-                
-                ui.myText.addEventListener("input", ui.edit, false);
-                ui.myNumber.addEventListener("change", ui.update, false);
-                ui.myCheck.addEventListener("change", ui.check, false);
-                ui.myButton.addEventListener("click", ui.click, false);
-                
-            };
-            
-            ui.click = function() {
-                console.log("button clicked");
-                //ui.myNumber.value = 100;
-                //ui.myText.value = "text was edited due to button";
-                if (ui.myCheck.checked)
-                    ui.myCheck.checked = false;
-                else
-                    ui.myCheck.checked = true;
-            };
-            
-            ui.edit = function() {
-                console.log("text was edited");
-                var text = ui.myText.value;
-                console.log(text);
-            };
-            
-            ui.update = function() {
-                console.log("slided was updated");
-            };
-            
-            ui.check = function() {
-                console.log("checkbox was updated");
-            };
-            
-            ui.init();
-            
-        </script>
+		<form method="" action="" data-role="content">
+                    <div data-role="fieldcontain">
+			<input type="button" value="previous" id="previousMedia">
+			<input type="button" value="play" id="playPause">
+			<input type="button" value="next" id="nextMedia">
+                    </div>
+                    <!--
+                    <div data-role="fieldcontain">
+                        <label for="vol">volume: </label>
+                        <input type="range" value="100" id="volSlider" min="0" max="100" data-highlight="true" data-mini="true" style="display: none !important">
+                    </div>
+                    -->
+                    <div data-role="fieldcontain">
+                        <label for="vol">volume: </label>
+                        <input type="number" value="100" id="vol" min="0" max="100" data-mini="true" style="display: none !important">
+                    </div>
+		</form>
+
+                <footer data-role="footer" data-position="fixed">
+                    <nav data-role="navbar">
+                        <ul>
+                            <li><a data-icon="home" href="#welcome"></a></li>
+                            <li><a data-icon="info" href="#help"></a></li>
+                            <li><a data-icon="power" href="#power"></a></li>
+                        </ul>
+                    </nav>
+                </footer>
+	</div>
+        <script src="js/require.js" data-main="js/app"></script>
         
     </body>
 </html>
