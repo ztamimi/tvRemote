@@ -8,7 +8,7 @@ define(["modules/backEnd"], function(backEnd) {
             media.play = false;
             media.index = 0;
             media.length = 1;
-            
+                        
             backEnd.setReceiveCallback(media.updateByBackend);
 	};
         

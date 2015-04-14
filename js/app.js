@@ -11,26 +11,23 @@ require.config({
 requirejs(["jquery"]);
 requirejs(["jqueryMobile"]);
 
-require(['modules/backEnd', 'modules/media', 'modules/ui'], function(backEnd, media, ui) {
+require(['modules/uiConnect' ,'modules/backEnd', 'modules/media', 'modules/ui'], function(uiConnect, backEnd, media, ui) {
     
     var url = 'https://blazing-heat-3187.firebaseio.com/';
     var name = 'tvRemote';
-    var session = 'abc123';
+    //var session = 'abc123';
     
-    var receiveCallback = function(key, value) {
-        console.log(key + ":" + value);
-    };
     
-    var firstWriteCallback = function() {
-        console.log("first write");
-    };
     
     backEnd.setUrl(url);
     
     backEnd.setAppName(name);
-    backEnd.setSessionId(session);
+    ui.init();
+    uiConnect.init();
     
-    backEnd.init();
+    //backEnd.setSessionId(session);
+    
+    //backEnd.init();
     //backEnd.setReceiveCallback(receiveCallback);
     //backEnd.setFirstWriteCallback(firstWriteCallback);
     /*
@@ -40,7 +37,7 @@ require(['modules/backEnd', 'modules/media', 'modules/ui'], function(backEnd, me
     media.shiftIndexByUi(1);
     */
    
-   ui.init();
+    //ui.init();
    
 
 });

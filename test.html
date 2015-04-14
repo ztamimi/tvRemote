@@ -4,8 +4,36 @@
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">    </head>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">    
+    </head>
     <body>
+        
+        <!-- ################################################ -->
+        <div data-role="page" id="welcome">
+                <header data-role="header">
+                        <h1>Remote</h1>
+                </header>
+                <div data-role="content">
+                    <p>To start enter the token and press connect.</p>
+                    <form method="" action="">
+                        <label for="sessionId">Session ID</label>
+                        <input type="text" id="sessionId" value="" placeholder="Session ID...">
+                        <input type="button" id="connect" value="connect">
+                    </form>
+                </div>
+                <footer data-role="footer" data-position="fixed">
+                    <nav data-role="navbar">
+                        <ul>
+                            <li><a data-icon="home" href="#home"></a></li>
+                            <li><a data-icon="info" href="#help"></a></li>
+                            <li><a data-icon="power" href="#power"></a></li>
+                        </ul>
+                    </nav>
+                </footer>
+        </div>
+        
+        <!-- ################################################ -->
+        
         <div data-role="page" id="remote">
                 <header data-role="header">
                         <h1>Remote</h1>

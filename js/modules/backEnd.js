@@ -5,6 +5,9 @@ define(["firebase"], function() {
 	backEnd.init = function() {
             var temp = backEnd.url + (backEnd.appName + '/' + backEnd.sessionId  + '/');              
             backEnd.ref = new Firebase(temp);
+            backEnd.ref.on('child_added', backEnd.receive); 
+            backEnd.ref.on('child_changed', backEnd.receive);
+            backEnd.ref.once('child_added', backEnd.firstWriteCallback);
         };
         
         backEnd.send = function(obj) {
@@ -41,12 +44,13 @@ define(["firebase"], function() {
         
         backEnd.setReceiveCallback = function(callback) {
             backEnd.receiveCallback = callback;
-            backEnd.ref.on('child_added', backEnd.receive); 
-            backEnd.ref.on('child_changed', backEnd.receive);
+            //backEnd.ref.on('child_added', backEnd.receive); 
+            //backEnd.ref.on('child_changed', backEnd.receive);
         };
         
         backEnd.setFirstWriteCallback = function(callback) {
-            backEnd.ref.once('child_added', callback);
+            backEnd.firstWriteCallback = callback;
+            //backEnd.ref.once('child_added', callback);
         };
         
     return backEnd;

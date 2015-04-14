@@ -1,22 +1,38 @@
-define([""], function() {
+define(["modules/backEnd"], function(backEnd) {
+    
 	var uiConnect = {};
+        
 	uiConnect.init = function() {
-            uiConnect.tokenInput = $('#token');
+            uiConnect.wait = false;
+            uiConnect.sessionId = $('#sessionId');
             uiConnect.connectBtn = $('#connect');
             uiConnect.registerEvents();
         };
+        
         // register uiConnect events
 	uiConnect.registerEvents = function() {
-            uiConnect.connectBtn.on('click', uiConnect.setTokenFunction);
+            uiConnect.connectBtn.on('click', uiConnect.setSessionIdFunction);
         };
         
-        uiConnect.setTokenFunction = function() {
-                var t = uiConnect.tokenInput.val();
-                app.setTokenFunction(t);
-                uiConnect.slide();
+        uiConnect.setSessionIdFunction = function() {
+            var session = uiConnect.sessionId.val();
+            backEnd.setSessionId(session);
+            uiConnect.slide();
+            backEnd.setFirstWriteCallback(uiConnect.slide);
+            backEnd.init();
         };
         
         uiConnect.slide = function() {
-                $.mobile.changePage("#remote", {transition: "slide", changeHash: false});
+            $.mobile.changePage("#remote", {transition: "slide", changeHash: false});
+            if (!uiConnect.wait) {
+                $.mobile.loading('show');
+                uiConnect.wait = !uiConnect.wait;
+            }
+            else {
+                $.mobile.loading('hide');
+                uiConnect.wait = !uiConnect.wait;
+            }
         };
+        
+    return uiConnect;
 });

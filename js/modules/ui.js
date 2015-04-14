@@ -1,5 +1,5 @@
 // ui object
-define(["modules/media"], function(media) {
+define(["modules/media", "jquery"], function(media, $) {
 	var ui = {};
         
 	ui.init = function() {
@@ -39,6 +39,7 @@ define(["modules/media"], function(media) {
         
         ui.changeVolumeSlider = function() {
             var volume = parseInt(ui.volInput.val());
+
             //ui.updateMediaByUiCallback("volume", volume);
             media.updateByUi("volume", volume);
         };
@@ -76,8 +77,8 @@ define(["modules/media"], function(media) {
 		ui.playPauseBtn.val("pause");
             else 
 		ui.playPauseBtn.val("play");
-                    
-            ui.playPauseBtn.button("refresh");
+              if (ui.playPauseBtn)      
+                ui.playPauseBtn.button("refresh");
         };
         
 	ui.updateVolumeByMedia = function(volume) {

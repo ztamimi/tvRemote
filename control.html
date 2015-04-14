@@ -7,8 +7,8 @@
 <title>controller</title>
 </head>
 
-<body>
-<!-- begin user interface -->
+    <body>
+        
         <!-- ################################################ -->
         <div data-role="page" id="welcome">
                 <header data-role="header">
@@ -17,8 +17,8 @@
                 <div data-role="content">
                     <p>To start enter the token and press connect.</p>
                     <form method="" action="">
-                        <label for="token">Token</label>
-                        <input type="text" id="token" value="" placeholder="Your Token...">
+                        <label for="sessionId">Session ID</label>
+                        <input type="text" id="sessionId" value="" placeholder="Session ID...">
                         <input type="button" id="connect" value="connect">
                     </form>
                 </div>
@@ -34,7 +34,8 @@
         </div>
         
         <!-- ################################################ -->
-	<div data-role="page" id="remote">
+        
+        <div data-role="page" id="remote">
                 <header data-role="header">
                         <h1>Remote</h1>
                 </header>
@@ -67,10 +68,8 @@
                     </nav>
                 </footer>
 	</div>
-<!-- end user interface -->
-
         <script src="js/require.js" data-main="js/app"></script>
-
-</body>
+        
+    </body>
 
 </html>
