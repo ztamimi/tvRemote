@@ -4,7 +4,7 @@ define(["modules/backEnd"], function(backEnd) {
         
 	// media init function
 	media.init = function() {
-            media.volume = 100;
+            media.volume = 0;
             media.play = false;
             media.index = 0;
             media.length = 1;
@@ -12,7 +12,16 @@ define(["modules/backEnd"], function(backEnd) {
             backEnd.setReceiveCallback(media.updateByBackend);
 	};
         
+        media.set = function(v, p, i, l) {
+            media.volume = v;
+            media.play = p;
+            media.index = i;
+            media.length = l;
+        };
+        
         media.updateByUi = function(key, value) {
+            console.log("media.updateByUi called " + key + ":" + value);
+            
             if (key === "shift") {
                 key = "index";
                 value = value + media.index;
