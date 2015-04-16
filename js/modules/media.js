@@ -34,31 +34,7 @@ define(["modules/backEnd"], function(backEnd) {
             obj[key] = media[key];
             backEnd.send(obj);
         };
-        /*
-	media.updateVolumeByUi = function(volume) {
-            if (media["volume"] === volume) {
-                console.log("*********");
-                return;
-            }
-            
-            media.volume = volume;    
-            backEnd.send({"volume": media.volume});
-	};
-        
-	media.updatePlayByUi = function(play) {	
-            if (media.play === play) {
-                return;
-            }
-            
-            media.play = play;
-            backEnd.send({"play": media.play});
-	};
-        
-        media.updateIndexByUi = function(index) {
-            media.index = index;
-            backEnd.send({"index": media.index});
-        };
-        */
+
         media.shiftIndexByUi = function(shift) {
             if (media.length < 2)
                 return;
@@ -102,7 +78,6 @@ define(["modules/backEnd"], function(backEnd) {
         
         /// setter methods //////////////////
         media.setUpdateByMediaCallback = function(callback) {
-            //console.log("media.updateUiByMediaCallback() called");
             media.updateUiByMediaCallback = callback;
         };
         

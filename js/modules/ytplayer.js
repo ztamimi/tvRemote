@@ -6,6 +6,7 @@ define(['jquery', 'modules/media'], function($, media) {
         ytplayer.playList = ['M7lc1UVf-VE'];
         media.setUpdateByMediaCallback(ytplayer.updateByMedia);
         console.log(media.volume + " " + media.play + " " + media.index + " " + media.length);
+        media.set(-1, -1, -1, -1);
     };
         
     ytplayer.playVideo = function(container, videoId) {
