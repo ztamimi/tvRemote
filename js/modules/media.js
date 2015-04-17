@@ -39,7 +39,7 @@ define(["modules/backEnd"], function(backEnd) {
             if (media.length < 2)
                 return;
             
-            var index = (media.index + shift) % media.length;
+            var index = (media.index + shift + media.length) % media.length;
             media.updateByUi("index", index);
         };
         

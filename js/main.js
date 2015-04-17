@@ -11,16 +11,9 @@ require.config({
 //requirejs(["jquery"]);
 //requirejs(["ytplayer"]);
 
-require(['modules/backEnd','modules/media','modules/tv'], function(backEnd, media, tv) {
+require(['modules/tv'], function(tv) {
     
-    var url = 'https://blazing-heat-3187.firebaseio.com/';
-    var name = 'tvRemote';    
     
-    var session = 'abc123';
-
-    backEnd.setUrl(url);    
-    backEnd.setAppName(name);
-    backEnd.setSessionId(session);
     
     //backEnd.setFirstWriteCallback(doNothing);
     

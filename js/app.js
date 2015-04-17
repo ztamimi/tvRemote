@@ -11,18 +11,8 @@ require.config({
 requirejs(["jquery"]);
 requirejs(["jqueryMobile"]);
 
-require(['modules/uiConnect' ,'modules/backEnd', 'modules/media', 'modules/ui'], function(uiConnect, backEnd, media, ui) {
+require(['modules/uiConnect'], function(uiConnect) {
     
-    var url = 'https://blazing-heat-3187.firebaseio.com/';
-    var name = 'tvRemote';
-    //var session = 'abc123';
-    
-    
-    
-    backEnd.setUrl(url);
-    
-    backEnd.setAppName(name);
-    ui.init();
     uiConnect.init();
     
     //backEnd.setSessionId(session);

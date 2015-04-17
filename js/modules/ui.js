@@ -3,7 +3,7 @@ define(["modules/media", "jquery"], function(media, $) {
 	var ui = {};
         
 	ui.init = function() {
-            ui.volInput = $('#vol').slider();
+            ui.volInput = $('#volume').slider();
             ui.playPauseBtn = $('#playPause');
             ui.previousMediaBtn = $('#previousMedia');
             ui.nextMediaBtn = $('#nextMedia');
@@ -26,12 +26,9 @@ define(["modules/media", "jquery"], function(media, $) {
             if (ui.playPauseBtn.val() === "play") {
 		ui.playPauseBtn.val("pause");
                 media.updateByUi("play", true);
-                //ui.updateMediaByUiCallback("play", true);
-
             }
             else {
 		ui.playPauseBtn.val("play");
-                //ui.updateMediaByUiCallback("play", false);
                 media.updateByUi("play", false);
             }
             ui.playPauseBtn.button("refresh"); 
@@ -40,20 +37,17 @@ define(["modules/media", "jquery"], function(media, $) {
         ui.changeVolumeSlider = function() {
             var volume = parseInt(ui.volInput.val());
 
-            //ui.updateMediaByUiCallback("volume", volume);
             media.updateByUi("volume", volume);
         };
         
         ui.clickNextBtn = function() {
             var shift = 1;
-            //ui.updateMediaByUiCallback("shift", shift);
-            media.updateByUi("shift", shift);
+            media.shiftIndexByUi(shift);
         };
         
         ui.clickPreviousBtn = function() {
             var shift = -1;
-            //ui.updateMediaByUiCallback("shift", shift);
-            media.updateByUi("shift", shift);
+            media.shiftIndexByUi(shift);
         };
         
         ///// update by media methods ///////////////
@@ -68,7 +62,7 @@ define(["modules/media", "jquery"], function(media, $) {
                 
                 case "volume":
                     ui.updateVolumeByMedia(value);
-                    break;
+                    break;    
             };
         };
         
@@ -86,12 +80,7 @@ define(["modules/media", "jquery"], function(media, $) {
             ui.volInput.slider('refresh');
 	};
         
-        //// setter method //////////////////////////
-        /*
-        ui.setUpdateMediaByUiCallback = function(callback) {
-            ui.updateMediaByUiCallback = callback;
-        };
-        */
+        
         
     return ui;
 });

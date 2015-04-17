@@ -4,6 +4,7 @@ define(['jquery', 'modules/media'], function($, media) {
     
     ytplayer.init = function() {
         ytplayer.playList = ['M7lc1UVf-VE'];
+        media.init();
         media.setUpdateByMediaCallback(ytplayer.updateByMedia);
         console.log(media.volume + " " + media.play + " " + media.index + " " + media.length);
         media.set(-1, -1, -1, -1);
@@ -46,6 +47,8 @@ define(['jquery', 'modules/media'], function($, media) {
             
         var index = ytplayer.player.getPlaylistIndex();
         media.updateByUi("index", index);
+        
+        media.updateByUi("length", ytplayer.playList.length);
     };
     
     ytplayer.onPlayerReady = function() {
