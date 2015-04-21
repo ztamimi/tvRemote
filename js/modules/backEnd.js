@@ -20,12 +20,13 @@ define(["firebase"], function() {
 
             var value = snapshot.val();
             var key = snapshot.key();
-            
+        /*    
             var obj = {};
             obj[key] = value;
             if (JSON.stringify(obj) == JSON.stringify(backEnd.log)) {
                 return;
             }
+            */
             if (backEnd.receiveCallback)
                 backEnd.receiveCallback(key, value);
 	};

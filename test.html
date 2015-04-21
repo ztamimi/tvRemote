@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">    
-    </head>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+<title>controller</title>
+<link rel="stylesheet" type="text/css" href="css/btn.css">
+</head>
+
     <body>
         
         <!-- ################################################ -->
-        <div data-role="page" id="welcome">
+        <div data-role="page" id="welcome" data-theme='b'>
                 <header data-role="header">
                         <h1>Remote</h1>
                 </header>
                 <div data-role="content">
                     <p>To start enter the token and press connect.</p>
-                    <form method="" action="">
+                    <form method="" action="" data-role="content">
                         <label for="sessionId">Session ID</label>
                         <input type="text" id="sessionId" value="" placeholder="Session ID...">
                         <input type="button" id="connect" value="connect">
+
                     </form>
                 </div>
                 <footer data-role="footer" data-position="fixed">
@@ -34,28 +36,31 @@
         
         <!-- ################################################ -->
         
-        <div data-role="page" id="remote">
+        <div data-role="page" id="remote" data-theme='b'>
                 <header data-role="header">
                         <h1>Remote</h1>
                 </header>
             
 		<form method="" action="" data-role="content">
-                    <div data-role="fieldcontain">
-			<input type="button" value="previous" id="previousMedia">
-			<input type="button" value="play" id="playPause">
-			<input type="button" value="next" id="nextMedia">
-                    </div>
-                    <!--
-                    <div data-role="fieldcontain">
-                        <label for="vol">volume: </label>
-                        <input type="range" value="100" id="volSlider" min="0" max="100" data-highlight="true" data-mini="true" style="display: none !important">
-                    </div>
-                    -->
-                    <div data-role="fieldcontain">
-                        <label for="vol">volume: </label>
-                        <input type="number" value="100" id="vol" min="0" max="100" data-mini="true" style="display: none !important">
-                    </div>
+                        
+                        <div class="ui-grid-solo">
+                            <div class="ui-block-a"><a href="" data-role="button" data-func="play" id="playPause"><img id="testImg" src="css/play.png" class="imgbtnL1"></a></div>
+                        </div>
+                        
+                        <div class="ui-grid-a">
+                            <div class="ui-block-a"><a href="" data-role="button" id="previousMedia" data-func="play"><img src="css/backward.png" class="imgbtnL2"></a></div>
+                            <div class="ui-block-b"><a href="" data-role="button" id="nextMedia" data-func="play"><img src="css/forward.png" class="imgbtnL2"></a></div>
+                        </div>
+                    
+                        <div>
+                            <input type="number" value="100" id="volume" min="0" max="100" data-highlight="true" data-mini=true style="display: none !important">
+                        </div>
+                        <div class='ui-grid-solo'>
+                            <div class='ui-block-a'><a href="" data-role="button" data-iconpos="notext" data-icon="audio" data-mini=true>text</a></div>
+                        </div>
+
 		</form>
+            
 
                 <footer data-role="footer" data-position="fixed">
                     <nav data-role="navbar">
@@ -70,4 +75,5 @@
         <script src="js/require.js" data-main="js/app"></script>
         
     </body>
+
 </html>
