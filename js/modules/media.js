@@ -8,15 +8,17 @@ define(["modules/backEnd"], function(backEnd) {
             media.play = false;
             media.index = 0;
             media.length = 1;
+            media.fullscreen = false;
                         
             backEnd.setReceiveCallback(media.updateByBackend);
 	};
         
-        media.set = function(v, p, i, l) {
+        media.set = function(v, p, i, l, f) {
             media.volume = v;
             media.play = p;
             media.index = i;
             media.length = l;
+            media.fullscreen = f;
         };
         
         media.updateByUi = function(key, value) {
@@ -72,6 +74,13 @@ define(["modules/backEnd"], function(backEnd) {
                     if (value !== media.length) {
                         media.length = value;
                         media.updateUiByMediaCallback("length", media.length);
+                    }
+                    break;
+                    
+                case 'fullscreen':
+                    if (value != media.fullscreen) {
+                        media.fullscreen = value;
+                        media.updateUiByMediaCallback("fullscreen", media.fullscreen);
                     }
             }  
         };

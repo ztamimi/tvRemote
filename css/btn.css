@@ -1,14 +1,27 @@
 .imgbtnL1 {
-    width: 60px; 
+    width: 40px; 
     height: 40px;
+    text-align: center;
 }
 
 .imgbtnL2 {
-    width: 60px; 
-    height: 40px;
+    width: 30px; 
+    height: 30px;
 }
 
 .imgIcon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
+}
+
+.align-right {
+    text-align: right;
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-center {
+    text-align: center;
 }

@@ -3,11 +3,11 @@ define(['jquery', 'modules/media'], function($, media) {
     var ytplayer = {};
     
     ytplayer.init = function() {
-        ytplayer.playList = ['M7lc1UVf-VE'];
+        ytplayer.playList = ['ErDkRerNKvQ'];
         media.init();
         media.setUpdateByMediaCallback(ytplayer.updateByMedia);
         console.log(media.volume + " " + media.play + " " + media.index + " " + media.length);
-        media.set(-1, -1, -1, -1);
+        media.set(-1, -1, -1, -1, -1);
     };
         
     ytplayer.playVideo = function(container, videoId) {
@@ -25,8 +25,8 @@ define(['jquery', 'modules/media'], function($, media) {
     ytplayer.loadPlayer = function(container, videoId) {
         ytplayer.player = new YT.Player(container, {
             videoId: videoId,
-            width: 600,
-            height: 400,
+            width: 640,
+            height: 480,
             events: {
                 'onReady': ytplayer.onPlayerReady,
 		'onStateChange': ytplayer.onStateChange
@@ -74,6 +74,16 @@ define(['jquery', 'modules/media'], function($, media) {
                 
             case "index":
                 ytplayer.player.playVideoAt(value);
+                
+            case "fullscreen":
+                if (value) {
+                    ytplayer.player.setSize(window.innerWidth, window.innerHeight);
+                    ytplayer.player.setPlaybackQuality("default");// "hd720");
+                }
+                else {
+                    ytplayer.player.setSize(640, 480);
+                    ytplayer.player.setPlaybackQuality("default");
+                }
 	};
     };
     

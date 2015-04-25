@@ -15,6 +15,8 @@ define(["modules/media", "jquery"], function(media, $) {
             ui.previousMediaBtn = $('#previousMedia');
             ui.nextMediaBtn = $('#nextMedia');
             
+            ui.fullscreenBtn = $('#fullscreen');
+            ui.fullscreenImg = $('#fullscreenImg');
             
             
             ui.registerEvents();
@@ -29,6 +31,7 @@ define(["modules/media", "jquery"], function(media, $) {
                 ui.speakerBtn.on('click', ui.clickSpeakerBtn);
                 ui.previousMediaBtn.on('click', ui.clickPreviousBtn);
                 ui.nextMediaBtn.on('click', ui.clickNextBtn);
+                ui.fullscreenBtn.on('click', ui.clickFullscreenBtn);
 	};
         
         /////////// ui methods //////////////
@@ -84,6 +87,17 @@ define(["modules/media", "jquery"], function(media, $) {
             media.shiftIndexByUi(shift);
         };
         
+        ui.clickFullscreenBtn = function() {
+            if (ui.fullscreenBtn.attr('data-size') === "standard") {
+                ui.setFullscreen(true);
+                media.updateByUi("fullscreen", true);
+            }
+            else {
+                ui.setFullscreen(false);
+                media.updateByUi("fullscreen", false);
+            }
+        };
+        
         ///// update by media methods ///////////////
         ui.updateByMedia = function(key, value) {
             
@@ -97,12 +111,16 @@ define(["modules/media", "jquery"], function(media, $) {
                 case "volume":
                     ui.setVolume(value);
                     ui.setSpeaker(value);
-                    break;    
+                    break;
+                
+                case "fullscreen":
+                    ui.setFullscreen(value);
+                    break;
             };
         };
         
         ui.setPlayPause = function(value) {            
-            console.log("ui.setPlayPause called " + value);
+            //console.log("ui.setPlayPause called " + value);
             if (value ) {
                 ui.playPauseBtn.attr('data-play', "play");
                 ui.playPauseImg.attr('src', 'css/pause.png');
@@ -131,22 +149,16 @@ define(["modules/media", "jquery"], function(media, $) {
             }
         };
         
-        /*
-	ui.updatePlayByMedia = function(play) {
-            if (play)
-		ui.playPauseBtn.val("pause");
-            else 
-		ui.playPauseBtn.val("play");
-              if (ui.playPauseBtn)      
-                ui.playPauseBtn.button("refresh");
+        ui.setFullscreen = function(value) {
+            if (value) {
+                ui.fullscreenBtn.attr('data-size', "fullscreen");
+                ui.fullscreenImg.attr('src', "css/fullscreenExit.png");
+            }
+            else {
+                ui.fullscreenBtn.attr('data-size', "standard");
+                ui.fullscreenImg.attr('src', "css/fullscreen.png");
+            }
         };
-        
-       
-	ui.updateVolumeByMedia = function(volume) {
-            ui.volInput.val(volume);
-            ui.volInput.slider('refresh');
-	};
-        */
         
         
     return ui;

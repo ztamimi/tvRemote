@@ -44,21 +44,24 @@
 		<form method="" action="" data-role="content">
                         
                         <div class="ui-grid-solo">
-                            <div class="ui-block-a"><a href="" data-role="button" data-play="pause" id="playPause"><img id="playPauseImg" src="css/play.png" class="imgbtnL1"></a></div>
+                            <div class="ui-block-a"><a href="" data-role="button" data-play="pause" id="playPause" data-mini="true" data-shadow="true"><img id="playPauseImg" src="css/play.png" class="imgbtnL1"></a></div>
                         </div>
                         
                         <div class="ui-grid-a">
-                            <div class="ui-block-a"><a href="" data-role="button" id="previousMedia"><img src="css/backward.png" class="imgbtnL2"></a></div>
-                            <div class="ui-block-b"><a href="" data-role="button" id="nextMedia"><img src="css/forward.png" class="imgbtnL2"></a></div>
+                            <div class="ui-block-a"><a href="" data-role="button" id="previousMedia" data-mini="true"><img src="css/backward.png" class="imgbtnL2"></a></div>
+                            <div class="ui-block-b"><a href="" data-role="button" id="nextMedia" data-mini="true"><img src="css/forward.png" class="imgbtnL2"></a></div>
                         </div>
                     
                     <div>
                         <input type="number" value="100" id="volume" min="0" max="100" data-highlight="true" data-mini=true style="display: none !important">
                     </div>
-                    <div>
-                        <a href="" data-role="button" id="speaker" data-func="speaker" data-inline="true" data-iconpos="notext"><img id="speakerImg" src="css/speaker.png" class="imgIcon"></a>
+                    
+                    
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a"><a href="" data-role="button" id="speaker" data-func="speaker" data-inline="true" data-mini="ture" data-iconpos="notext"><img id="speakerImg" src="css/speaker.png" class="imgIcon"></a></div>                    
+                        <div class="ui-block-b align-right"><a href="" data-role="button" id="fullscreen" data-inline="true" data-mini="true" data-size="standard"><img id="fullscreenImg" src="css/fullscreen.png" class="imgIcon"></a></div>
                     </div>
-                        
+
 		</form>
             
 

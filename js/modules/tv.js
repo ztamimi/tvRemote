@@ -34,12 +34,10 @@ define(["modules/ytplayer", "modules/backEnd"], function(ytplayer, backEnd) {
                 console.log("invalid youtube url");
                 return;
             }
-            var param = temp.split("=")[1];
-            param = param.split("&")[0];
-            console.log("param: " + param);
+            var param = url.split("?")[1].split("v=")[1].split("&")[0];
             ytplayer.playList.push(param);
-            //media.updateLengthByUi(tv.playList.length);
             ytplayer.loadPlayList();
+            tv.urlInput.value("copy the url of a youtube video here ...  ");
         };
          
         tv.setSessionId = function(t) {
