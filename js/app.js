@@ -11,8 +11,9 @@ require.config({
 requirejs(["jquery"]);
 requirejs(["jqueryMobile"]);
 
-require(['modules/uiConnect'], function(uiConnect) {
+require(['modules/list', 'modules/uiConnect'], function(list, uiConnect) {
     
+    list.init();
     uiConnect.init();
     
     //backEnd.setSessionId(session);
