@@ -20,8 +20,8 @@
                     </form>
                 </div>
                 <div data-role="content" data-theme="b">
-                    <ol id="list" data-role="listview" data-theme="b">                       
-                    </ol>                    
+                    <ul id="videoList" data-role="listview" class="ui-overlay-shadow" data-split-icon="delete">
+                    </ul>                    
                 </div>
                 <div data-role="footer" data-position="fixed">
                     <nav data-role="navbar">
@@ -38,17 +38,13 @@
         
         <div data-role="page" id="remote" data-theme='b'>
                 <div data-role="header" data-position="fixed">
-                        <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
-                        <h4>Connect to monitor</h4>
-                        <form>
-                            <table>
-                                <tr>
-                                <td><input type="text" id="sessionId" value="" placeholder="Session ID..." data-mini="true" data-inline="true"></td>
-                                <td><input type="button" id="connect" value="connect" data-icon="check" data-iconpos="notext" data-mini="true" data-inline="true"></td>
-                                </tr>
-                            </table>
-                        </form>
-                    </div>
+                    <fieldset data-role="collapsible" data-mini="true" data-iconpos="right" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <legend>Connect to monitor</legend>
+                        <table>
+                            <td><input type="text" id="sessionId" value="" placeholder="Session ID..." data-mini="true" data-inline="true"></td>
+                            <td><input type="button" id="connect" value="connect" data-icon="check" data-iconpos="notext" data-mini="true" data-inline="true"></td>
+                        </table>
+                    </fieldset>
                 </div>
             
                 <div data-role="content">
@@ -58,28 +54,27 @@
                         <div class="ui-block-b align-right"><a href="" id="speaker" data-func="speaker"><img id="speakerImg" src="css/speaker.png" class="imgIcon"></a></div>
                     </div>
                     
-                    <br>
-                    
-
                     <div class="ui-grid-solo">
                         <div class="ui-block-a align-center"><a href="" data-play="pause" id="playPause"><img id="playPauseImg" src="css/play.png" class="imgbtnL1"></a></div>
-                    </div>
-                    
-                    <div class="ui-grid-a">
-                        <div class="ui-block-a align-center"><a href="" id="previousMedia"><img src="css/backward.png" class="imgbtnL2"></a></div>
-                        <div class="ui-block-b align-center"><a href="" id="nextMedia"><img src="css/forward.png" class="imgbtnL2"></a></div>
-                    </div>
-                    
-                    <div class="ui-grid-solo">
-                        <div class="ui-block-a align-center"><a href="" id="stop"><img src="css/stop.png" class="imgbtnL2"></a></div>
                     </div>
                     
                     <div>
                         <input type="number" value="100" id="volume" min="0" max="100" data-highlight="true" data-mini=true style="display: none !important">
                     </div>
                     
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a align-center"><p align="center">playing</p></div>
+                    </div>
                     
-
+                    <div class="ui-grid-b">
+                        <div class="ui-block-a align-left"><a href="" id="previousMedia"><img src="css/backward.png" class="imgIcon"></a></div>
+                        <div class="ui-block-b align-center"><img class="img" src="https://i.ytimg.com/vi/gzDS-Kfd5XQ/default.jpg"></div>
+                        <div class="ui-block-c align-right"><a href="" id="nextMedia"><img src="css/forward.png" class="imgIcon"></a></div>
+                    </div>
+                    
+                    <div class="ui-grid-solo">
+                        <div class="ui-block-a align-center"><p>Sesame Street: Ray Charles Sings "I Got A Song"  With Bert & Ernie</p></div>
+                    </div>
 		</form>
                 </div>
 

@@ -5,6 +5,7 @@ define(["modules/media", "jquery"], function(media, $) {
 	list.init = function() {             
             list.addUrlBtn = document.getElementById("addUrl");
             list.urlInput = document.getElementById("url");
+            list.videoList = $("#videoList");
             
             list.registerEvents();
 	};
@@ -12,17 +13,46 @@ define(["modules/media", "jquery"], function(media, $) {
 	// register events
 	list.registerEvents = function() {
             list.addUrlBtn.addEventListener("click", list.addUrl, false);
+            //list.videoList.addEventListener("click", list.)
+            list.videoList.on('click', 'li a.data', list.clickItem);
+            list.videoList.on('click', 'li a.delete', list.deleteItem);
 	};
+        
+        list.clickItem = function() {
+            var listItem = $(this).parent("li");
+            console.log("click item");
+            console.log("index: " + listItem.index("li"));
+            //listItem.attr("data-theme", "c");
+        };
+        
+        list.deleteItem = function() {
+            var listItem = $(this).parent('li');
+            //console.log("delete item");
+            var index = listItem.index("li");
+            //console.log("index: " + index);
+            media.playList.splice(index, 1);
+            //console.log("media.playList: " + media.playList);
+            listItem.remove();
+            //list.videoList.listview.refresh();
+        };
         
         list.addUrl = function() {
             var url = list.urlInput.value;
+            if (!url)
+                return;
             var temp = url.split("://")[1];
+            if (!temp)
+                return;
             var site = temp.split("?")[0];
             if (site.toLowerCase() !== "www.youtube.com/watch") {
                 console.log("invalid youtube url");
                 return;
             }
             var param = url.split("?")[1].split("v=")[1].split("&")[0];
+            
+            media.playList.push(param);
+            
+            console.log("media.playList: " + media.playList);
             
             list.urlInput.value = "";
             
@@ -36,18 +66,20 @@ define(["modules/media", "jquery"], function(media, $) {
 						return;
 					}
                                         var item = $("<li>"); //, {class: "ui-li-has-thumb ui-last-child"});
-                                        var link = $("<a>", {href: '#'}); //, class: 'ui-btn ui-btn-icon-right ui-icon-carat-r'});
+                                        var link = $("<a>", {href: '#', class: 'data'}); //, class: 'ui-btn ui-btn-icon-right ui-icon-carat-r'});
 					var thumb = $("<img>", {
 						src: data.items[0].snippet.thumbnails.default.url,
 						//width: data.items[0].snippet.thumbnails.default.width,
 						//height: data.items[0].snippet.thumbnails.default.height
 					});
                                         var title = $("<p></p>").text(data.items[0].snippet.title);
+                                        var icon = $("<a>", {href:'', class:'delete ui-btn ui-btn-icon-notext ui-icon-delete', title:'Delete'});
                                         link.append(thumb);
                                         link.append(title);
                                         item.append(link);
-                                        item.appendTo("#list");
-                                        $("#list").listview( "refresh");
+                                        item.append(icon);
+                                        item.appendTo("#videoList");
+                                        $("#videoList").listview( "refresh");
 				}).fail(function(jqXHR, textStatus, errorThrown) {
                                     console.log("error");
 					//$("<p style='color: #F00;'></p>").text(jqXHR.responseText || errorThrown).appendTo("#video-data-1");

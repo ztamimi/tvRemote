@@ -1,6 +1,6 @@
 .imgbtnL1 {
-    width: 90x; 
-    height: 90px;
+    width: 70x; 
+    height: 70px;
     text-align: center;
 }
 
@@ -10,9 +10,14 @@
     text-align: center;
 }
 
+.img {
+    height: 60px;
+    text-align: center;
+}
+
 .imgIcon {
-    width: 40x;
-    height: 40px;
+    width: 30x;
+    height: 30px;
     text-align: center;
 }
 
@@ -26,4 +31,12 @@
 
 .align-center {
     text-align: center;
+}
+
+/* Hide the delete button on touch devices */
+ul.touch li.ui-li-has-alt a.delete {
+    display: none;
+}
+ul.touch li.ui-li-has-alt a.ui-btn {
+    margin-right:0;
 }

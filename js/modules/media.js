@@ -9,6 +9,7 @@ define(["modules/backEnd"], function(backEnd) {
             media.index = 0;
             media.length = 1;
             media.fullscreen = false;
+            media.playList = [];
                         
             backEnd.setReceiveCallback(media.updateByBackend);
 	};
