@@ -178,8 +178,8 @@ define(["modules/media", "jquery"], function(media, $) {
         
         //////////// carousel functions ////////////////////
             
-            ui.addToCarousel = function(url) {
-                var item = $("<li>");
+            ui.addToCarousel = function(url, videoId) {
+                var item = $("<li>", {'data-videoId': videoId});
                 var img = $("<img>", {src: url, class: "slideImg"});
                 item.append(img);
                 item.appendTo(ui.list);
@@ -187,6 +187,11 @@ define(["modules/media", "jquery"], function(media, $) {
                 var imgWidth = $(".slideImg").css("width");
                 var totalWidth = imgNum * parseInt(imgWidth);
                 ui.list.css({width: totalWidth});
+            };
+            
+            ui.removeCarouselItem = function(videoId) {
+                var item = $("li[data-videoId*=" + videoId + "]")[0];
+                item.remove();
             };
             
             ui.clickNext = function() {

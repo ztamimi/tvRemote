@@ -20,20 +20,26 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
         
         list.clickItem = function() {
             var listItem = $(this).parent("li");
+            var videoId = listItem.attr("id");
+            var mediaIndex = media.playList.indexOf(videoId);
             console.log("click item");
-            console.log("index: " + listItem.index("li"));
-            //listItem.attr("data-theme", "c");
+            console.log("index: " + mediaIndex);
         };
         
         list.deleteItem = function() {
             var listItem = $(this).parent('li');
             //console.log("delete item");
-            var index = listItem.index("li");
-            //console.log("index: " + index);
-            media.playList.splice(index, 1);
+            var videoId = listItem.attr("data-videoId");
+            temp = listItem.attr("data-vidoeId");
+            console.log("videoId: " + videoId);
+            var mediaIndex = media.playList.indexOf(videoId);
+            //var index = listItem.index("li");
+            console.log("index: " + mediaIndex);
+            media.playList.splice(mediaIndex, 1);
             //console.log("media.playList: " + media.playList);
             listItem.remove();
             //list.videoList.listview.refresh();
+            ui.removeCarouselItem(videoId);
         };
         
         list.addUrl = function() {
@@ -65,7 +71,7 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
 						$("<p style='color: #F00;'>Video not found.</p>").appendTo("#video-data-1");
 						return;
 					}
-                                        var item = $("<li>"); //, {class: "ui-li-has-thumb ui-last-child"});
+                                        var item = $("<li>", {'data-videoId': param}); //, {class: "ui-li-has-thumb ui-last-child"});
                                         var link = $("<a>", {href: '#', class: 'data'}); //, class: 'ui-btn ui-btn-icon-right ui-icon-carat-r'});
                                         
 					var thumb = $("<img>", {
@@ -73,7 +79,7 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
 						//width: data.items[0].snippet.thumbnails.default.width,
 						//height: data.items[0].snippet.thumbnails.default.height
 					});
-                                        ui.addToCarousel(data.items[0].snippet.thumbnails.default.url);
+                                        ui.addToCarousel(data.items[0].snippet.thumbnails.default.url, param);
                                         var title = $("<p></p>").text(data.items[0].snippet.title);
                                         var icon = $("<a>", {href:'', class:'delete ui-btn ui-btn-icon-notext ui-icon-delete', title:'Delete'});
                                         link.append(thumb);
