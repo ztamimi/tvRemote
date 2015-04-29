@@ -18,6 +18,18 @@ define(["modules/media", "jquery"], function(media, $) {
             ui.fullscreenBtn = $('#fullscreen');
             ui.fullscreenImg = $('#fullscreenImg');
             
+            ///// carousel ////////////////
+            var w = window.innerWidth;
+            console.log("window.innerWidth: " + w);
+            $("#carousel").css({width: w});
+            
+            ui.imageWidth = parseInt(w/4);
+            console.log("ui.imageWidth: " + ui.imageWidth);
+            $(".slideImg").css({width: ui.imageWidth});
+            
+            ui.backBtn = $("#back"); 
+            ui.nextBtn = $("#next"); 
+            ui.list = $("#carousel ul");
             
             ui.registerEvents();
             
@@ -32,6 +44,10 @@ define(["modules/media", "jquery"], function(media, $) {
                 ui.previousMediaBtn.on('click', ui.clickPreviousBtn);
                 ui.nextMediaBtn.on('click', ui.clickNextBtn);
                 ui.fullscreenBtn.on('click', ui.clickFullscreenBtn);
+                
+                //// carousel events ///////
+                ui.backBtn.on("click", ui.clickBack);
+                ui.nextBtn.on("click", ui.clickNext);
 	};
         
         /////////// ui methods //////////////
@@ -160,6 +176,42 @@ define(["modules/media", "jquery"], function(media, $) {
             }
         };
         
-        
+        //////////// carousel functions ////////////////////
+            
+            ui.addToCarousel = function(url) {
+                var item = $("<li>");
+                var img = $("<img>", {src: url, class: "slideImg"});
+                item.append(img);
+                item.appendTo(ui.list);
+                var imgNum = ui.list.children().size();
+                var imgWidth = $(".slideImg").css("width");
+                var totalWidth = imgNum * parseInt(imgWidth);
+                ui.list.css({width: totalWidth});
+            };
+            
+            ui.clickNext = function() {
+                shift = '-' + ui.imageWidth;
+                ui.list.animate({marginLeft: shift}, ui.nextCallback);
+            };
+            
+            ui.clickBack = function() {
+                ui.list.animate({marginLeft: ui.imageWidth}, ui.backCallback);
+            };
+            
+            ui.nextCallback = function() {
+                console.log("next callback");
+                var lastItem = ui.list.find("li:last");
+                var firstItem = ui.list.find("li:first");
+                lastItem.after(firstItem);
+                ui.list.css({marginLeft: 0});
+            };
+            
+            ui.backCallback = function() {
+                console.log("back callback");
+        	var lastItem = ui.list.find("li:last");
+                var firstItem = ui.list.find("li:first");
+                firstItem.before(lastItem);
+                ui.list.css({marginLeft: 0});
+            };
     return ui;
 });

@@ -47,7 +47,7 @@
                     </fieldset>
                 </div>
             
-                <div data-role="content">
+                <div data-role="content" class="noMargins">
 		<form> 
                     <div class="ui-grid-a">
                         <div class="ui-block-a align-left"><a href="" id="fullscreen" data-size="standard"><img id="fullscreenImg" src="css/fullscreen.png" class="imgIcon"></a></div>
@@ -62,19 +62,17 @@
                         <input type="number" value="100" id="volume" min="0" max="100" data-highlight="true" data-mini=true style="display: none !important">
                     </div>
                     
-                    <div class="ui-grid-solo">
-                        <div class="ui-block-a align-center"><p align="center">playing</p></div>
+                    <div id="carousel">
+                        <ul>
+                            
+                        </ul>
                     </div>
                     
-                    <div class="ui-grid-b">
-                        <div class="ui-block-a align-left"><a href="" id="previousMedia"><img src="css/backward.png" class="imgIcon"></a></div>
-                        <div class="ui-block-b align-center"><img class="img" src="https://i.ytimg.com/vi/gzDS-Kfd5XQ/default.jpg"></div>
-                        <div class="ui-block-c align-right"><a href="" id="nextMedia"><img src="css/forward.png" class="imgIcon"></a></div>
+                    <div class="ui-grid-a">
+                        <div class="ui-block-a align-left"><a href="" id="back"><img src="css/backward.png" class="imgIcon"></a></div>
+                        <div class="ui-block-b align-right"><a href="" id="next"><img src="css/forward.png" class="imgIcon"></a></div>
                     </div>
                     
-                    <div class="ui-grid-solo">
-                        <div class="ui-block-a align-center"><p>Sesame Street: Ray Charles Sings "I Got A Song"  With Bert & Ernie</p></div>
-                    </div>
 		</form>
                 </div>
 

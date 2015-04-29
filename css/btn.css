@@ -40,3 +40,32 @@ ul.touch li.ui-li-has-alt a.delete {
 ul.touch li.ui-li-has-alt a.ui-btn {
     margin-right:0;
 }
+
+            .slideImg {
+                width: 80px;
+                //height: 80px;
+            }
+            
+            #carousel {
+                width: 320px;
+                overflow: hidden;
+                border: black solid 1px;
+                margin: 0;
+            }
+            
+            #carousel ul{
+                width: 2000px;
+                padding: 0;
+                margin: 0;
+            }
+            
+            #carousel ul li{
+                list-style: none;
+                float: left;
+            }
+            
+            .noMargins {
+                //margin: 0;
+                padding: 0;
+            }
+            

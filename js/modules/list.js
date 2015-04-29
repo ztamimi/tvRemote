@@ -1,5 +1,5 @@
 // list object
-define(["modules/media", "jquery"], function(media, $) {
+define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
 	var list = {};
 
 	list.init = function() {             
@@ -67,11 +67,13 @@ define(["modules/media", "jquery"], function(media, $) {
 					}
                                         var item = $("<li>"); //, {class: "ui-li-has-thumb ui-last-child"});
                                         var link = $("<a>", {href: '#', class: 'data'}); //, class: 'ui-btn ui-btn-icon-right ui-icon-carat-r'});
+                                        
 					var thumb = $("<img>", {
 						src: data.items[0].snippet.thumbnails.default.url,
 						//width: data.items[0].snippet.thumbnails.default.width,
 						//height: data.items[0].snippet.thumbnails.default.height
 					});
+                                        ui.addToCarousel(data.items[0].snippet.thumbnails.default.url);
                                         var title = $("<p></p>").text(data.items[0].snippet.title);
                                         var icon = $("<a>", {href:'', class:'delete ui-btn ui-btn-icon-notext ui-icon-delete', title:'Delete'});
                                         link.append(thumb);

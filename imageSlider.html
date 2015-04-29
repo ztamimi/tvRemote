@@ -1,0 +1,119 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title></title>
+        <style>
+            .slideImg {
+                //width: 120px;
+                //height: 120px;
+            }
+            
+            #carousel {
+                width: 360px;
+                overflow: hidden;
+                border: black solid 1px;
+            }
+            
+            #carousel ul{
+                width: 2000px;
+                padding: 0;
+                margin: 0;
+            }
+            
+            #carousel ul li{
+                list-style: none;
+                float: left;
+            }
+            
+            body {
+                margin: 0;
+            }
+        </style>
+    </head>
+    
+    <body>
+        
+        <form>
+            <label for="url">image source</label>
+            <input id="url" placeholder="enter image url...">
+            <input type="button" value="add" id="add">
+        </form>
+        
+        <div id="carousel">
+        <ul>
+            <li><img class="slideImg" src="css/play.png"></li>
+            <li><img class="slideImg" src="css/pause.png"></li>
+            <li><img class="slideImg" src="css/speaker.png"></li>
+            <li><img class="slideImg" src="css/mute.png"></li>
+            <li><img class="slideImg" src="css/fullscreen.png"></li>
+            <li><img class="slideImg" src="css/fullscreenExit.png"></li>
+        </ul>
+        </div>
+        
+        <input type="button" id="back" value="back">
+        <br>
+        <input type="button" id="next" value="next">
+        
+        <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script>
+            var addBtn = $("#add");
+            addBtn.on("click", clickAdd);
+            
+            function clickAdd() {
+                var url = $("#url").val();
+                var item = $("<li>");
+                var img = $("<img>", {src: url, class: "slideImg"});
+                item.append(img);
+                item.appendTo(list);
+                var imgNum = list.children().size();
+                var imgWidth = $(".slideImg").css("width");
+                var totalWidth = imgNum * parseInt(imgWidth);
+                list.css({width: totalWidth});
+            };
+            
+            var backBtn = $("#back"); 
+            var nextBtn = $("#next"); 
+            var list = $("#carousel ul");
+            
+            var w = window.innerWidth;
+            console.log("w: " + w);
+            $("#carousel").css({width: w});
+            
+            var imageWidth = parseInt(w/3);
+            console.log(imageWidth);
+            $(".slideImg").css({width: imageWidth});
+            
+            
+            backBtn.on("click", clickBack);
+            nextBtn.on("click", clickNext);
+            
+            function clickNext() {
+                shift = '-' + imageWidth;
+                list.animate({marginLeft: shift}, nextCallback);
+            };
+            
+            function clickBack() {
+                list.animate({marginLeft: imageWidth}, backCallback);
+            };
+            
+            function nextCallback() {
+                console.log("next callback");
+                var lastItem = list.find("li:last");
+                var firstItem = list.find("li:first");
+                lastItem.after(firstItem);
+                list.css({marginLeft: 0});
+            };
+            
+            function backCallback() {
+                console.log("back callback");
+        	var lastItem = list.find("li:last");
+                var firstItem = list.find("li:first");
+                firstItem.before(lastItem);
+                list.css({marginLeft: 0});
+            };
+            
+        </script>
+    </body>
+    
+   
+</html>
