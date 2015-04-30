@@ -2,14 +2,20 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title></title>
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
         <style>
             .slideImg {
-                //width: 120px;
-                //height: 120px;
+                width: 100px;
+                height: 100px;
+                padding: 0px 5px;
+                margin: 0px 0px;
+                //border: red solid 1px;
+                box-sizing: border-box;
             }
             
             #carousel {
-                width: 360px;
+                width: 320px;
                 overflow: hidden;
                 border: black solid 1px;
             }
@@ -55,6 +61,7 @@
         <input type="button" id="next" value="next">
         
         <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
         <script>
             var addBtn = $("#add");
             addBtn.on("click", clickAdd);
@@ -69,6 +76,22 @@
                 var imgWidth = $(".slideImg").css("width");
                 var totalWidth = imgNum * parseInt(imgWidth);
                 list.css({width: totalWidth});
+            };
+            
+            $("#carousel").on("swiperight", swipeRightCarousel);
+            
+            function swipeRightCarousel(evt) {
+                dist = Math.abs(evt.swipestop.coords[0] - evt.swipestart.coords[0]);
+                //console.log("dist: " + dist);
+                clickBack(dist);
+            };
+            
+            $("#carousel").on("swipeleft", swipeLeftCarousel);
+            
+            function swipeLeftCarousel(evt) {
+                dist = Math.abs(evt.swipestop.coords[0] - evt.swipestart.coords[0]);
+                //console.log("dist: " + dist);
+                clickNext(dist);
             };
             
             var backBtn = $("#back"); 
@@ -87,13 +110,24 @@
             backBtn.on("click", clickBack);
             nextBtn.on("click", clickNext);
             
-            function clickNext() {
-                shift = '-' + imageWidth;
-                list.animate({marginLeft: shift}, nextCallback);
+            function clickNext(dist) {
+                //var threashold = 30;
+                //var rounds = parseInt(dist/threashold);
+                //console.log("rounds: " + rounds);
+                //for (var i=0; i<rounds; i++) {
+                    var shift = '-' + imageWidth;
+                    list.animate({marginLeft: shift}, nextCallback);
+                //}
             };
             
-            function clickBack() {
-                list.animate({marginLeft: imageWidth}, backCallback);
+            function clickBack(dist) {
+                //var threashold = 30;
+                //var rounds = parseInt(dist/threashold);
+                //console.log("rounds: " + rounds);
+                //for (var i=0; i<rounds; i++) {
+                var shift = imageWidth;
+                    list.animate({marginLeft: shift}, backCallback);
+                //}
             };
             
             function nextCallback() {

@@ -2,7 +2,8 @@
 define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
 	var list = {};
 
-	list.init = function() {             
+	list.init = function() {
+            ui.init();
             list.addUrlBtn = document.getElementById("addUrl");
             list.urlInput = document.getElementById("url");
             list.videoList = $("#videoList");
@@ -23,7 +24,7 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
             var videoId = listItem.attr("id");
             var mediaIndex = media.playList.indexOf(videoId);
             console.log("click item");
-            console.log("index: " + mediaIndex);
+            console.log("index: " + mediaInduex);
         };
         
         list.deleteItem = function() {

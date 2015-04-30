@@ -3,12 +3,11 @@ define(["modules/media", "jquery"], function(media, $) {
 	var ui = {};
         
 	ui.init = function() {
+            console.log("ui.init");
             ui.volInput = $('#volume').slider();
             ui.speakerBtn = $('#speaker');
             ui.speakerImg = $('#speakerImg');
-            
-            //ui.saveLastVolumeValue(parseInt(ui.volInput.val()));
-            
+                        
             ui.playPauseBtn = $('#playPause');
             ui.playPauseImg = $('#playPauseImg');
             
@@ -18,19 +17,13 @@ define(["modules/media", "jquery"], function(media, $) {
             ui.fullscreenBtn = $('#fullscreen');
             ui.fullscreenImg = $('#fullscreenImg');
             
-            ///// carousel ////////////////
-            var w = window.innerWidth;
-            console.log("window.innerWidth: " + w);
-            $("#carousel").css({width: w});
-            
-            ui.imageWidth = parseInt(w/4);
-            console.log("ui.imageWidth: " + ui.imageWidth);
-            $(".slideImg").css({width: ui.imageWidth});
-            
             ui.backBtn = $("#back"); 
             ui.nextBtn = $("#next"); 
+            ui.carousel = $("#carousel");
             ui.list = $("#carousel ul");
             
+            ui.initCarousel();
+
             ui.registerEvents();
             
             media.init();
@@ -46,6 +39,8 @@ define(["modules/media", "jquery"], function(media, $) {
                 ui.fullscreenBtn.on('click', ui.clickFullscreenBtn);
                 
                 //// carousel events ///////
+                ui.carousel.on("swiperight", ui.clickBack);
+                ui.carousel.on("swipeleft", ui.clickNext);
                 ui.backBtn.on("click", ui.clickBack);
                 ui.nextBtn.on("click", ui.clickNext);
 	};
@@ -136,7 +131,6 @@ define(["modules/media", "jquery"], function(media, $) {
         };
         
         ui.setPlayPause = function(value) {            
-            //console.log("ui.setPlayPause called " + value);
             if (value ) {
                 ui.playPauseBtn.attr('data-play', "play");
                 ui.playPauseImg.attr('src', 'css/pause.png');
@@ -147,9 +141,7 @@ define(["modules/media", "jquery"], function(media, $) {
             }
         };
         
-        ui.setVolume = function(volume) {
-            //ui.saveLastVolumeValue(volume);
-            
+        ui.setVolume = function(volume) {            
             ui.volInput.val(volume);
             ui.volInput.slider('refresh');
         };
@@ -178,14 +170,23 @@ define(["modules/media", "jquery"], function(media, $) {
         
         //////////// carousel functions ////////////////////
             
+            ui.initCarousel = function() {
+                console.log("initConsole");
+                var w = window.innerWidth;
+                $("#carousel").css({width: w});
+            
+                ui.imageNum = 3;
+                ui.imageWidth = parseInt(w/ui.imageNum);
+            };
+            
             ui.addToCarousel = function(url, videoId) {
                 var item = $("<li>", {'data-videoId': videoId});
                 var img = $("<img>", {src: url, class: "slideImg"});
+                img.css({width: ui.imageWidth});
                 item.append(img);
                 item.appendTo(ui.list);
                 var imgNum = ui.list.children().size();
-                var imgWidth = $(".slideImg").css("width");
-                var totalWidth = imgNum * parseInt(imgWidth);
+                var totalWidth = imgNum * ui.imageWidth;
                 ui.list.css({width: totalWidth});
             };
             

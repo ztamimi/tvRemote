@@ -42,12 +42,16 @@ ul.touch li.ui-li-has-alt a.ui-btn {
 }
 
             .slideImg {
-                width: 80px;
+                width: 100px;
+                //padding: 0px 5px;
+                //margin: 0px 0px;
+                //border: red solid 1px;
+                //box-sizing: border-box;
                 //height: 80px;
             }
             
             #carousel {
-                width: 320px;
+                width: 300px;
                 overflow: hidden;
                 border: black solid 1px;
                 margin: 0;
