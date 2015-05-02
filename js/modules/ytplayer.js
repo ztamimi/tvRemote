@@ -3,7 +3,7 @@ define(['jquery', 'modules/media'], function($, media) {
     var ytplayer = {};
     
     ytplayer.init = function() {
-        ytplayer.playList = ['ErDkRerNKvQ'];
+        //ytplayer.playList = ['ErDkRerNKvQ'];
         media.init();
         media.setUpdateByMediaCallback(ytplayer.updateByMedia);
         console.log(media.volume + " " + media.play + " " + media.index + " " + media.length);
@@ -48,7 +48,7 @@ define(['jquery', 'modules/media'], function($, media) {
         var index = ytplayer.player.getPlaylistIndex();
         media.updateByUi("index", index);
         
-        media.updateByUi("length", ytplayer.playList.length);
+        //media.updateByUi("length", ytplayer.playList.length);
     };
     
     ytplayer.onPlayerReady = function() {
@@ -56,7 +56,7 @@ define(['jquery', 'modules/media'], function($, media) {
     };
     
     ytplayer.loadPlayList = function() {
-        ytplayer.player.cuePlaylist(ytplayer.playList);//, 0, 0, "large");
+        ytplayer.player.cuePlaylist(media.playList/*ytplayer.playList*/);//, 0, 0, "large");
     };
     
     ytplayer.updateByMedia = function(key, value) {
@@ -84,6 +84,11 @@ define(['jquery', 'modules/media'], function($, media) {
                     ytplayer.player.setSize(640, 480);
                     ytplayer.player.setPlaybackQuality("default");
                 }
+                break;
+                
+            case "playList":
+                ytplayer.loadPlayList();
+                break;
 	};
     };
     

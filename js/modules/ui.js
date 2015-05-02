@@ -181,9 +181,11 @@ define(["modules/media", "jquery"], function(media, $) {
             
             ui.addToCarousel = function(url, videoId) {
                 var item = $("<li>", {'data-videoId': videoId});
+                var link = $("<a>", {href: '#', 'data-role': 'button'});
                 var img = $("<img>", {src: url, class: "slideImg"});
                 img.css({width: ui.imageWidth});
-                item.append(img);
+                link.append(img);
+                item.append(link);
                 item.appendTo(ui.list);
                 var imgNum = ui.list.children().size();
                 var totalWidth = imgNum * ui.imageWidth;

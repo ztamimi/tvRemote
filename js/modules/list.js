@@ -3,10 +3,11 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
 	var list = {};
 
 	list.init = function() {
-            ui.init();
+            //ui.init();
             list.addUrlBtn = document.getElementById("addUrl");
             list.urlInput = document.getElementById("url");
             list.videoList = $("#videoList");
+            list.foucs = null;
             
             list.registerEvents();
 	};
@@ -22,24 +23,21 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
         list.clickItem = function() {
             var listItem = $(this).parent("li");
             var videoId = listItem.attr("id");
-            var mediaIndex = media.playList.indexOf(videoId);
+            //var focusStyle = "border: blue solid 1px"
+            //if (list.focus)
+            //    list.focus.attr("style", null);
+            //list.focus = listItem;
+            //listItem.attr("style", focusStyle);
+            //listItem.focus();
             console.log("click item");
-            console.log("index: " + mediaInduex);
         };
         
         list.deleteItem = function() {
             var listItem = $(this).parent('li');
-            //console.log("delete item");
             var videoId = listItem.attr("data-videoId");
-            temp = listItem.attr("data-vidoeId");
-            console.log("videoId: " + videoId);
-            var mediaIndex = media.playList.indexOf(videoId);
-            //var index = listItem.index("li");
-            console.log("index: " + mediaIndex);
-            media.playList.splice(mediaIndex, 1);
-            //console.log("media.playList: " + media.playList);
+            //console.log("videoId: " + videoId);
+            media.deletePlayListItem(videoId);
             listItem.remove();
-            //list.videoList.listview.refresh();
             ui.removeCarouselItem(videoId);
         };
         
@@ -57,7 +55,7 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
             }
             var param = url.split("?")[1].split("v=")[1].split("&")[0];
             
-            media.playList.push(param);
+            media.addPlayListItem(param);
             
             console.log("media.playList: " + media.playList);
             

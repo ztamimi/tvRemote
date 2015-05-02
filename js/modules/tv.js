@@ -7,7 +7,7 @@ define(["modules/ytplayer", "modules/backEnd", "jquery"], function(ytplayer, bac
             tv.addUrlBtn = document.getElementById("addUrl");
             tv.urlInput = document.getElementById("url");
 
-            var sessionId = tv.generateSessionId();
+            var sessionId = 'abc123'; //tv.generateSessionId();
             tv.setSessionId(sessionId);
             
             backEnd.setUrl('https://blazing-heat-3187.firebaseio.com/');
@@ -23,9 +23,9 @@ define(["modules/ytplayer", "modules/backEnd", "jquery"], function(ytplayer, bac
 
 	// register tv events
 	tv.registerEvents = function() {
-            tv.addUrlBtn.addEventListener("click", tv.addUrl, false);
+            ///tv.addUrlBtn.addEventListener("click", tv.addUrl, false);
 	};
-        
+        /*
         tv.addUrl = function() {
             var url = tv.urlInput.value;
             var temp = url.split("://")[1];
@@ -65,6 +65,7 @@ define(["modules/ytplayer", "modules/backEnd", "jquery"], function(ytplayer, bac
 				});
         };
          
+        */
         tv.setSessionId = function(t) {
             tv.sessionId.innerText = t;
         };

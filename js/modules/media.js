@@ -22,6 +22,19 @@ define(["modules/backEnd"], function(backEnd) {
             media.fullscreen = f;
         };
         
+        media.addPlayListItem = function(videoId) {
+            if (media.playList.indexOf(videoId) == -1) {
+                media.playList.push(videoId);
+                backEnd.push('playList', videoId);
+            }
+        };
+        
+        media.deletePlayListItem = function(videoId) {
+            var mediaIndex = media.playList.indexOf(videoId);
+            media.playList.splice(mediaIndex, 1);
+            backEnd.delete('playList', videoId);
+        };
+        
         media.updateByUi = function(key, value) {
             console.log("media.updateByUi called " + key + ":" + value);
             
@@ -47,7 +60,7 @@ define(["modules/backEnd"], function(backEnd) {
         };
         
         media.updateByBackend = function(key, value) {
-            console.log("media.updateByBackend() called");
+            console.log("media.updateByBackend called: " + key + ":" + value);
             
             switch(key) {
 		case 'volume':
@@ -83,6 +96,26 @@ define(["modules/backEnd"], function(backEnd) {
                         media.fullscreen = value;
                         media.updateUiByMediaCallback("fullscreen", media.fullscreen);
                     }
+                    break;
+                    
+                case 'addVideoId':
+                    var videoId = value;
+                    if (media.playList.indexOf(videoId) == -1) {
+                        media.playList.push(videoId);
+                        media.updateUiByMediaCallback("playList", videoId);
+                    }
+                    break;
+                    
+                case 'deleteVideoId':
+                    var videoId = value;
+                    var mediaIndex = media.playList.indexOf(videoId);
+                    media.playList.splice(mediaIndex, 1);
+                    media.updateUiByMediaCallback("playList", videoId);
+                    break;
+                
+               // default:
+               //     console.log("****default");
+               //     console.log(key + ":" + JSON.stringify(value));
             }  
         };
         
