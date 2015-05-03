@@ -43,6 +43,9 @@ define(["modules/media", "jquery"], function(media, $) {
                 ui.carousel.on("swipeleft", ui.clickNext);
                 ui.backBtn.on("click", ui.clickBack);
                 ui.nextBtn.on("click", ui.clickNext);
+                ui.list.on('click', 'li a', ui.clickItem);
+
+                
 	};
         
         /////////// ui methods //////////////
@@ -97,6 +100,8 @@ define(["modules/media", "jquery"], function(media, $) {
             var shift = -1;
             media.shiftIndexByUi(shift);
         };
+        
+       
         
         ui.clickFullscreenBtn = function() {
             if (ui.fullscreenBtn.attr('data-size') === "standard") {
@@ -181,7 +186,7 @@ define(["modules/media", "jquery"], function(media, $) {
             
             ui.addToCarousel = function(url, videoId) {
                 var item = $("<li>", {'data-videoId': videoId});
-                var link = $("<a>", {href: '#', 'data-role': 'button'});
+                var link = $("<a>", {href: '#'/*, 'data-role': 'button'*/});
                 var img = $("<img>", {src: url, class: "slideImg"});
                 img.css({width: ui.imageWidth});
                 link.append(img);
@@ -196,6 +201,22 @@ define(["modules/media", "jquery"], function(media, $) {
                 var item = $("li[data-videoId*=" + videoId + "]")[0];
                 item.remove();
             };
+            
+            ui.clickItem = function() {
+            var listItem = $(this).parent("li");
+            //var index = listItem.index();
+            //console.log("index: ", index);
+            //media.updateByUi("index", index);
+            var videoId = listItem.attr("data-videoId");
+            media.clickItem(videoId);
+            //var focusStyle = "border: blue solid 1px"
+            //if (list.focus)
+            //    list.focus.attr("style", null);
+            //list.focus = listItem;
+            //listItem.attr("style", focusStyle);
+            //listItem.focus();
+            //console.log("click item");
+        };
             
             ui.clickNext = function() {
                 shift = '-' + ui.imageWidth;
@@ -221,5 +242,10 @@ define(["modules/media", "jquery"], function(media, $) {
                 firstItem.before(lastItem);
                 ui.list.css({marginLeft: 0});
             };
+            
+            ui.slide = function() {
+                $.mobile.changePage("#remote", {transition: "slide", changeHash: false});
+            }
+        
     return ui;
 });

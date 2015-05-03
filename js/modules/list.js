@@ -22,14 +22,21 @@ define(["modules/media", "modules/ui", "jquery"], function(media, ui, $) {
         
         list.clickItem = function() {
             var listItem = $(this).parent("li");
-            var videoId = listItem.attr("id");
+            var videoId = listItem.attr("data-videoId");
+            media.clickItem(videoId);
+            ui.slide();
+
+            //var index = listItem.index();
+            //console.log("index: ", index);
+            //media.updateByUi("index", index);
+            
             //var focusStyle = "border: blue solid 1px"
             //if (list.focus)
             //    list.focus.attr("style", null);
             //list.focus = listItem;
             //listItem.attr("style", focusStyle);
             //listItem.focus();
-            console.log("click item");
+            //console.log("click item");
         };
         
         list.deleteItem = function() {

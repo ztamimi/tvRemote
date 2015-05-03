@@ -51,6 +51,13 @@ define(["modules/backEnd"], function(backEnd) {
             backEnd.send(obj);
         };
 
+        media.clickItem = function(videoId) {
+            var index = media.playList.indexOf(videoId);
+            console.log("index: " + index);
+            media.updateByUi("index", index);
+            media.updateByUi("play", true);
+        };
+
         media.shiftIndexByUi = function(shift) {
             if (media.length < 2)
                 return;
@@ -61,7 +68,7 @@ define(["modules/backEnd"], function(backEnd) {
         
         media.updateByBackend = function(key, value) {
             console.log("media.updateByBackend called: " + key + ":" + value);
-            
+            console.log("%%% " + media.playList + "      " + media.index);
             switch(key) {
 		case 'volume':
                     if (value !== media.volume) {

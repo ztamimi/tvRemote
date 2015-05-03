@@ -3,6 +3,7 @@ define(['jquery', 'modules/media'], function($, media) {
     var ytplayer = {};
     
     ytplayer.init = function() {
+        ytplayer.cude = false;
         //ytplayer.playList = ['ErDkRerNKvQ'];
         media.init();
         media.setUpdateByMediaCallback(ytplayer.updateByMedia);
@@ -39,6 +40,8 @@ define(['jquery', 'modules/media'], function($, media) {
     ytplayer.onStateChange = function() {
         console.log("ytplayer.onStateChange called");
         
+        console.log(ytplayer.player.getPlayerState());
+        
         var play = (ytplayer.player.getPlayerState() === 1);
         media.updateByUi("play", play);
 
@@ -46,7 +49,11 @@ define(['jquery', 'modules/media'], function($, media) {
         media.updateByUi("volume", volume);
             
         var index = ytplayer.player.getPlaylistIndex();
-        media.updateByUi("index", index);
+        if (index < 0) {
+            ytplayer.cude = false;
+        }
+        else
+            media.updateByUi("index", index);
         
         //media.updateByUi("length", ytplayer.playList.length);
     };
@@ -57,12 +64,18 @@ define(['jquery', 'modules/media'], function($, media) {
     
     ytplayer.loadPlayList = function() {
         ytplayer.player.cuePlaylist(media.playList/*ytplayer.playList*/);//, 0, 0, "large");
+        ytplayer.cude = true;
     };
     
     ytplayer.updateByMedia = function(key, value) {
         console.log("ytplayer.updateByMedia called");
+        console.log("*******" + media.playList + "      " + media.index);
+
         switch(key) {
             case "play":
+                if (!ytplayer.cude) {
+                    ytplayer.loadPlayList();
+                }
                 if (value)
                     ytplayer.player.playVideo();
 		else
@@ -73,6 +86,9 @@ define(['jquery', 'modules/media'], function($, media) {
                 break;
                 
             case "index":
+                if (!ytplayer.cude) {
+                    ytplayer.loadPlayList();
+                }
                 ytplayer.player.playVideoAt(value);
                 
             case "fullscreen":
