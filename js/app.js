@@ -11,11 +11,24 @@ require.config({
 requirejs(["jquery"]);
 requirejs(["jqueryMobile"]);
 
-require(['modules/uiConnect', 'modules/ui', 'modules/list'], function(uiConnect, ui, list) {
+require(['modules/uiConnect', 'modules/backEnd', 'modules/control', 'modules/ui', 'modules/list'], function(uiConnect, backEnd, control, ui, list) {
     
     uiConnect.init();
     ui.init();
     list.init();
+    control.init();
+    control.setUiValueCallback(ui.updateValueByControl);
+    control.setUiListCallback(list.updateListByControl);
+    backEnd.init();
+    backEnd.setUpdateValueCallback(control.updateValueByBackEnd);
+    backEnd.setUpdateListCallback(control.updateListByBackEnd);
+    control.set();
+    
+
+    
+    
+    
+    
     //list.init();
     //uiConnect.init();
     

@@ -4,11 +4,13 @@ define(['jquery', 'modules/media'], function($, media) {
     
     ytplayer.init = function() {
         ytplayer.cude = false;
-        //ytplayer.playList = ['ErDkRerNKvQ'];
+        
         media.init();
         media.setUpdateByMediaCallback(ytplayer.updateByMedia);
         console.log(media.volume + " " + media.play + " " + media.index + " " + media.length);
-        media.set(-1, -1, -1, -1, -1);
+
+        //media.set = function(v, p, i, l, f) {
+        //media.set(50, false, 0, 0, false);
     };
         
     ytplayer.playVideo = function(container, videoId) {
@@ -49,11 +51,12 @@ define(['jquery', 'modules/media'], function($, media) {
         media.updateByUi("volume", volume);
             
         var index = ytplayer.player.getPlaylistIndex();
+        
         if (index < 0) {
             ytplayer.cude = false;
         }
-        else
-            media.updateByUi("index", index);
+        //else
+        //    media.updateByUi("index", index);
         
         //media.updateByUi("length", ytplayer.playList.length);
     };
@@ -63,19 +66,16 @@ define(['jquery', 'modules/media'], function($, media) {
     };
     
     ytplayer.loadPlayList = function() {
-        ytplayer.player.cuePlaylist(media.playList/*ytplayer.playList*/);//, 0, 0, "large");
+        ytplayer.player.cuePlaylist(media.playList);
         ytplayer.cude = true;
-    };
-    
+    };  
+
     ytplayer.updateByMedia = function(key, value) {
         console.log("ytplayer.updateByMedia called");
         console.log("*******" + media.playList + "      " + media.index);
 
         switch(key) {
             case "play":
-                if (!ytplayer.cude) {
-                    ytplayer.loadPlayList();
-                }
                 if (value)
                     ytplayer.player.playVideo();
 		else
@@ -90,6 +90,7 @@ define(['jquery', 'modules/media'], function($, media) {
                     ytplayer.loadPlayList();
                 }
                 ytplayer.player.playVideoAt(value);
+                break;
                 
             case "fullscreen":
                 if (value) {

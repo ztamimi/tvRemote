@@ -1,4 +1,4 @@
-define(["modules/backEnd", "modules/ui"], function(backEnd, ui) {
+define(["modules/backEnd"], function(backEnd) {
     
 	var uiConnect = {};
         
@@ -10,7 +10,7 @@ define(["modules/backEnd", "modules/ui"], function(backEnd, ui) {
             backEnd.setUrl('https://blazing-heat-3187.firebaseio.com/');
             backEnd.setAppName('tvRemote');
             backEnd.sessionId = uiConnect.sessionId;
-            backEnd.init();
+            //backEnd.init();
             //ui.init();
             
             //uiConnect.registerEvents();

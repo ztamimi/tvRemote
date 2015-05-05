@@ -4,16 +4,25 @@ define(["modules/backEnd"], function(backEnd) {
         
 	// media init function
 	media.init = function() {
-            media.volume = 0;
-            media.play = false;
-            media.index = 0;
-            media.length = 1;
-            media.fullscreen = false;
-            media.playList = [];
-                        
+            media.volume = null;
+            media.play = null;
+            media.index = null;
+            media.length = null;
+            media.fullscreen = null;
+        
             backEnd.setReceiveCallback(media.updateByBackend);
 	};
         
+        media.set = function () {
+            media.updateByUi('volume', 50);
+            media.updateByUi('play', false);
+            media.updateByUi('index', 0);
+            media.updateByUi('length', 0);
+            media.updateByUi('fullscreen', false);
+            media.playList = [];
+        };
+        
+        /*
         media.set = function(v, p, i, l, f) {
             media.volume = v;
             media.play = p;
@@ -21,27 +30,25 @@ define(["modules/backEnd"], function(backEnd) {
             media.length = l;
             media.fullscreen = f;
         };
-        
-        media.addPlayListItem = function(videoId) {
+        */
+        media.addPlayListItemByUi = function(videoId) {
             if (media.playList.indexOf(videoId) == -1) {
                 media.playList.push(videoId);
                 backEnd.push('playList', videoId);
+                backEnd.send({'length': media.playList.length});
             }
         };
         
-        media.deletePlayListItem = function(videoId) {
+        media.deletePlayListItemByUi = function(videoId) {
             var mediaIndex = media.playList.indexOf(videoId);
             media.playList.splice(mediaIndex, 1);
             backEnd.delete('playList', videoId);
+            backEnd.send({'length': media.playList.length});
         };
         
         media.updateByUi = function(key, value) {
             console.log("media.updateByUi called " + key + ":" + value);
             
-            if (key === "shift") {
-                key = "index";
-                value = value + media.index;
-            }
             if (media[key] === value)
                 return;
             
@@ -55,20 +62,16 @@ define(["modules/backEnd"], function(backEnd) {
             var index = media.playList.indexOf(videoId);
             console.log("index: " + index);
             media.updateByUi("index", index);
-            media.updateByUi("play", true);
-        };
-
-        media.shiftIndexByUi = function(shift) {
-            if (media.length < 2)
-                return;
-            
-            var index = (media.index + shift + media.length) % media.length;
-            media.updateByUi("index", index);
+            //media.updateByUi("play", true);
         };
         
         media.updateByBackend = function(key, value) {
             console.log("media.updateByBackend called: " + key + ":" + value);
             console.log("%%% " + media.playList + "      " + media.index);
+            
+            if (media[key] === value)
+                return;
+            
             switch(key) {
 		case 'volume':
                     if (value !== media.volume) {
@@ -107,7 +110,7 @@ define(["modules/backEnd"], function(backEnd) {
                     
                 case 'addVideoId':
                     var videoId = value;
-                    if (media.playList.indexOf(videoId) == -1) {
+                    if (media.playList.indexOf(videoId) === -1) {
                         media.playList.push(videoId);
                         media.updateUiByMediaCallback("playList", videoId);
                     }
@@ -116,13 +119,11 @@ define(["modules/backEnd"], function(backEnd) {
                 case 'deleteVideoId':
                     var videoId = value;
                     var mediaIndex = media.playList.indexOf(videoId);
-                    media.playList.splice(mediaIndex, 1);
-                    media.updateUiByMediaCallback("playList", videoId);
+                    if (media.playList.indexOf(videoId) !== -1) {
+                        media.playList.splice(mediaIndex, 1);
+                        media.updateUiByMediaCallback("playList", videoId);
+                    }
                     break;
-                
-               // default:
-               //     console.log("****default");
-               //     console.log(key + ":" + JSON.stringify(value));
             }  
         };
         
