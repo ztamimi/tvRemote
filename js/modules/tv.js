@@ -1,44 +1,94 @@
-// tv object
-define(["modules/ytplayer", "modules/backEnd", "jquery"], function(ytplayer, backEnd, $) {
+// control object
+define(["modules/backEnd"], function(backEnd) {
 	var tv = {};
-
-	tv.init = function() {             
-            tv.sessionId = document.getElementById("sessionId");
-            tv.addUrlBtn = document.getElementById("addUrl");
-            tv.urlInput = document.getElementById("url");
-
-            var sessionId = 'abc123'; //tv.generateSessionId();
-            tv.setSessionId(sessionId);
-            
-            backEnd.setUrl('https://blazing-heat-3187.firebaseio.com/');
-            backEnd.setAppName('tvRemote');
-            backEnd.setSessionId(sessionId);
-            
-            tv.registerEvents();
-            ytplayer.init();
-            ytplayer.playVideo('player', '');
-            
-            backEnd.init();
-	};
-
-	tv.registerEvents = function() {
-            ///tv.addUrlBtn.addEventListener("click", tv.addUrl, false);
+        
+	tv.init = function() {
+            tv.index = 0;
+            tv.playList = [];
+            tv.volume = 100;
+            tv.play = false;
 	};
         
-        tv.setSessionId = function(t) {
-            tv.sessionId.innerText = t;
+        tv.set = function (volume, play, index) {
+            tv.updateByUi('volume', volume);
+            tv.updateByUi('play', play);
+            tv.updateByUi('index', index);
+            tv.playList = [];
         };
         
-        tv.generateSessionId = function() {
-                var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZ";//abcdefghiklmnopqrstuvwxyz";
-                var string_length = 6;
-                var randomstring = '';
-                for (var i=0; i<string_length; i++) {
-                        var rnum = Math.floor(Math.random() * chars.length);
-                        randomstring += chars.substring(rnum,rnum+1);
-                }
-                return randomstring;
+        tv.addVideo = function(videoId) {
+            if (tv.playList.indexOf(videoId) >= 0) // video does exist in list
+                return;
+            tv.playList.push(videoId);
+            backEnd.push(videoId);
         };
         
-        return tv;
+        tv.deleteVideo = function(videoId) {
+            var index = tv.playList.indexOf(videoId); // video does not exist in list
+            if (index < 0)
+                return;
+            tv.playList.splice(index, 1);
+            backEnd.delete(videoId);
+        };
+        
+        tv.updateByUi = function(key, value) {
+            console.log("tv.updateByUi called " + key + ":" + value);
+            
+            if (tv[key] === value)
+                return;
+            
+            tv[key] = value;
+            
+            var obj = {}; 
+            obj[key] = tv[key];
+            backEnd.send(obj);
+        };
+
+        tv.clickItem = function(videoId) {
+            var index = tv.playList.indexOf(videoId);
+            if (index < 0)
+                return;
+            tv.updateByUi("index", index);
+        };
+        
+        tv.updateValueByBackEnd = function(key, value) {
+            if (key == "playList")
+                return;
+            console.log(key + ":" + value);
+            if (tv[key] === value)
+                return;
+            
+            tv[key] = value;
+            tv.uiValueCallback(key, value);
+        };
+    
+        tv.updateListByBackEnd = function(task, videoId) {
+            console.log("tv.updateListByBackEnd: "+ task + ":" + videoId);
+            if (task === 'add') {
+                if (tv.playList.indexOf(videoId) >= 0) // video does exist in list
+                    return;
+                tv.playList.push(videoId);
+                tv.uiListCallback("add", videoId);
+            }
+                
+            if (task === 'delete') {
+                var index = tv.playList.indexOf(videoId);
+                if (index < 0)  // video does not exist in list
+                    return;
+                tv.playList.splice(index, 1);
+                tv.uiListCallback("delete", videoId);
+            }
+        };
+        
+        /// setter methods //////////////////
+        tv.setUiValueCallback = function(callback) {
+            tv.uiValueCallback = callback;
+        };
+        
+        tv.setUiListCallback = function(callback) {
+            tv.uiListCallback = callback;
+        };
+        
+        
+    return tv;
 });

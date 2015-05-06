@@ -1,19 +1,18 @@
-define(['jquery', 'modules/media'], function($, media) {
+define(['jquery', 'modules/tv'], function($, tv) {
     
     var ytplayer = {};
     
     ytplayer.init = function() {
-        ytplayer.cude = false;
-        
-        media.init();
-        media.setUpdateByMediaCallback(ytplayer.updateByMedia);
-        console.log(media.volume + " " + media.play + " " + media.index + " " + media.length);
+        ytplayer.initPlayer("player");
+        //tv.init();
+        //tv.setUpdateByTvCallback(ytplayer.updateByTv);
+        //console.log(tv.volume + " " + tv.play + " " + tv.index + " " + tv.length);
 
-        //media.set = function(v, p, i, l, f) {
-        //media.set(50, false, 0, 0, false);
+        //tv.set = function(v, p, i, l, f) {
+        //tv.set(50, false, 0, 0, false);
     };
         
-    ytplayer.playVideo = function(container, videoId) {
+    ytplayer.initPlayer = function(container, videoId) {
         if (typeof(YT) == 'undefined' || typeof(YT.Player) == 'undefined') {
             window.onYouTubeIframeAPIReady = function() {
                 ytplayer.loadPlayer(container, videoId);
@@ -45,20 +44,13 @@ define(['jquery', 'modules/media'], function($, media) {
         console.log(ytplayer.player.getPlayerState());
         
         var play = (ytplayer.player.getPlayerState() === 1);
-        media.updateByUi("play", play);
+      tv.updateByUi("play", play);
 
         var volume = parseInt(ytplayer.player.getVolume());        
-        media.updateByUi("volume", volume);
+      tv.updateByUi("volume", volume);
             
         var index = ytplayer.player.getPlaylistIndex();
-        
-        if (index < 0) {
-            ytplayer.cude = false;
-        }
-        //else
-        //    media.updateByUi("index", index);
-        
-        //media.updateByUi("length", ytplayer.playList.length);
+      tv.updateByUi("index", index);
     };
     
     ytplayer.onPlayerReady = function() {
@@ -66,14 +58,17 @@ define(['jquery', 'modules/media'], function($, media) {
     };
     
     ytplayer.loadPlayList = function() {
-        ytplayer.player.cuePlaylist(media.playList);
-        ytplayer.cude = true;
+        console.log("!!!!!!!!!!!!!!!!!!!!!!11");
+        if (! ytplayer.player)
+            console.log("BIG problem");
+        
+        ytplayer.player.cuePlaylist(tv.playList);
     };  
 
-    ytplayer.updateByMedia = function(key, value) {
-        console.log("ytplayer.updateByMedia called");
-        console.log("*******" + media.playList + "      " + media.index);
-
+    ytplayer.updateValueByTv = function(key, value) {
+        if (key === 'playList')
+            return;
+        
         switch(key) {
             case "play":
                 if (value)
@@ -86,27 +81,31 @@ define(['jquery', 'modules/media'], function($, media) {
                 break;
                 
             case "index":
-                if (!ytplayer.cude) {
-                    ytplayer.loadPlayList();
-                }
+                if (!tv.playList.length)
+                    return;
+               // var i = ytplayer.player.getPlaylistIndex();
+                //console.log("=========== " + i);
+               
+                //if (i < 0)
+                //    ytplayer.loadPlayList();
                 ytplayer.player.playVideoAt(value);
-                break;
-                
-            case "fullscreen":
-                if (value) {
-                    ytplayer.player.setSize(window.innerWidth, window.innerHeight);
-                    ytplayer.player.setPlaybackQuality("default");// "hd720");
-                }
-                else {
-                    ytplayer.player.setSize(640, 480);
-                    ytplayer.player.setPlaybackQuality("default");
-                }
-                break;
-                
-            case "playList":
-                ytplayer.loadPlayList();
-                break;
+                brefile:///home/zakiya/projects/tvRemote/control.html#ak;
 	};
+    };
+    
+    ytplayer.updateListByTv = function(key, value) {
+        var status = ytplayer.player.getPlayerState();
+        if (status === 1 || status === 2) {
+            var i = ytplayer.player.getPlaylistIndex();
+            ytplayer.player.pauseVideo();
+            var t = ytplayer.player.getCurrentTime();
+            
+            ytplayer.player.loadPlaylist(tv.playList, i, t);
+            if (status === 2)
+                ytplayer.player.pauseVideo();
+        }
+        else
+            ytplayer.loadPlayList();
     };
     
     return ytplayer;

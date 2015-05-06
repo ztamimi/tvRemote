@@ -4,7 +4,7 @@ define(["modules/control", "jquery"], function(control, $) {
         
 	ui.init = function() {
             console.log("ui.init");
-            ui.volInput = $('#volume').slider();
+            ui.volInput = $('#volume').val(50).slider();
             ui.speakerBtn = $('#speaker');
             ui.speakerImg = $('#speakerImg');
                         
@@ -92,8 +92,7 @@ define(["modules/control", "jquery"], function(control, $) {
         };
         
         ui.setVolume = function(volume) {            
-            ui.volInput.val(volume);
-            ui.volInput.slider('refresh');
+            ui.volInput.val(volume).slider('refresh');
         };
         
         ui.setSpeaker = function(volume) {
@@ -113,8 +112,14 @@ define(["modules/control", "jquery"], function(control, $) {
             var w = window.innerWidth;
             $("#carousel").css({width: w});
             
-            ui.imageNum = 3;
-            ui.imageWidth = parseInt(w/ui.imageNum);
+            //ui.imageNum = 3;
+            ui.imageWidth = 120;
+            ui.imageNum = parseInt(w/ui.imageWidth);
+            if (ui.imageNum < 3) {
+                ui.imageNum = 3;
+                ui.imageWidth = parseInt(w/ui.imageNum);
+            }
+            //ui.imageWidth = parseInt(w/ui.imageNum);
         };
             
         ui.addToCarousel = function(videoId) {

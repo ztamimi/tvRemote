@@ -4,37 +4,26 @@ require.config({
     paths: {
         "firebase": "http://cdn.firebase.com/js/client/2.2.2/firebase",
         "jquery": "http://code.jquery.com/jquery-1.11.1.min"
-       // "ytplayer": "http://www.youtube.com/iframe_api"
     }
 });
 
-//requirejs(["jquery"]);
-//requirejs(["ytplayer"]);
-
-require(['modules/tv'], function(tv) {
+require(['modules/backEnd', 'modules/tv', 'modules/ytplayer'], function(backEnd, tv, ytplayer) {
     
+    ytplayer.init();
+    tv.setUiValueCallback(ytplayer.updateValueByTv);
+    tv.setUiListCallback(ytplayer.updateListByTv);
     
+  
+    var sessionId = "abc123";              
+    backEnd.setUrl('https://blazing-heat-3187.firebaseio.com/');
+    backEnd.setAppName('tvRemote');
+    backEnd.setSessionId(sessionId);
     
-    //backEnd.setFirstWriteCallback(doNothing);
-    
-    //backEnd.init();
-    
-    //media.set(-1, -1, -1, -1);
-    
-    	// app object
-/*
-	app.init = function(n, d, url) {
-		app.name = n;
-		app.debug = d;
-                // generate token
-                app.generateToken();
-                backEnd.init(url, app.token);
-                media.init(-1, -1, -1, 0);	
-                ui.init();
-                ui.setTokenFunction(app.token);
-	};    
-*/    
     tv.init();
-        
-
+    
+    backEnd.init();
+    
+    backEnd.setUpdateValueCallback(tv.updateValueByBackEnd);
+    backEnd.setUpdateListCallback(tv.updateListByBackEnd);
+    
 });

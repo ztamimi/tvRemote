@@ -16,35 +16,14 @@ require(['modules/uiConnect', 'modules/backEnd', 'modules/control', 'modules/ui'
     uiConnect.init();
     ui.init();
     list.init();
+    
     control.init();
     control.setUiValueCallback(ui.updateValueByControl);
     control.setUiListCallback(list.updateListByControl);
+    
     backEnd.init();
     backEnd.setUpdateValueCallback(control.updateValueByBackEnd);
     backEnd.setUpdateListCallback(control.updateListByBackEnd);
+    
     control.set();
-    
-
-    
-    
-    
-    
-    //list.init();
-    //uiConnect.init();
-    
-    //backEnd.setSessionId(session);
-    
-    //backEnd.init();
-    //backEnd.setReceiveCallback(receiveCallback);
-    //backEnd.setFirstWriteCallback(firstWriteCallback);
-    /*
-    media.init();
-    media.updateByUi("volume", 50);
-    media.updateByUi("length", 4);
-    media.shiftIndexByUi(1);
-    */
-   
-    //ui.init();
-   
-
 });
