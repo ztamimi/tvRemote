@@ -77,6 +77,9 @@ define(["modules/control", "jquery"], function(control, $) {
                     ui.setVolume(value);
                     ui.setSpeaker(value);
                     break;
+                    
+                case "index":
+                    ui.highLightItem(value);
             };
         };
         
@@ -140,9 +143,31 @@ define(["modules/control", "jquery"], function(control, $) {
             var item = $("li[data-videoId*=" + videoId + "]")[0];
             item.remove();
         };
+        
+        ui.highLightItem = function(index) {
+            
+            ui.list.find("li").css("background", "none");
+
+            var videoId = control.playList[index];
+            var selector = "li[data-videoId=" + videoId + "]";
+            var listItem = ui.list.find(selector);
+            
+            var loc = ui.list.find("li").index(listItem);
+            var shift = loc - ui.imageNum + 1;
+            for (i = 0; i < shift; i++) {
+                ui.clickNext();
+            }
+            
+            listItem.css("background", "#555");
+        };
             
         ui.clickItem = function() {
-            var listItem = $(this).parent("li");    
+            var listItem = $(this).parent("li");
+            
+            ui.list.find("li").css("background", "none");
+            
+            listItem.css("background", "#555");
+            
             var videoId = listItem.attr("data-videoId");
             control.clickItem(videoId);
         };

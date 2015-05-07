@@ -18,6 +18,11 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
         
         list.clickItem = function() {
             var listItem = $(this).parent("li");
+            
+            $("#videoList li").find("a").css("background-color", "");
+            
+            listItem.find("a").css("background-color", "#555");//.attr("style", "border: silver solid 1px; border-radius: 5px");
+            
             var videoId = listItem.attr("data-videoId");
             control.clickItem(videoId);
             ui.slide();

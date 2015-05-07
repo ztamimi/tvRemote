@@ -4,12 +4,6 @@ define(['jquery', 'modules/tv'], function($, tv) {
     
     ytplayer.init = function() {
         ytplayer.initPlayer("player");
-        //tv.init();
-        //tv.setUpdateByTvCallback(ytplayer.updateByTv);
-        //console.log(tv.volume + " " + tv.play + " " + tv.index + " " + tv.length);
-
-        //tv.set = function(v, p, i, l, f) {
-        //tv.set(50, false, 0, 0, false);
     };
         
     ytplayer.initPlayer = function(container, videoId) {
@@ -44,13 +38,13 @@ define(['jquery', 'modules/tv'], function($, tv) {
         console.log(ytplayer.player.getPlayerState());
         
         var play = (ytplayer.player.getPlayerState() === 1);
-      tv.updateByUi("play", play);
+        tv.updateByUi("play", play);
 
         var volume = parseInt(ytplayer.player.getVolume());        
-      tv.updateByUi("volume", volume);
+        tv.updateByUi("volume", volume);
             
         var index = ytplayer.player.getPlaylistIndex();
-      tv.updateByUi("index", index);
+        tv.updateByUi("index", index);
     };
     
     ytplayer.onPlayerReady = function() {
@@ -58,7 +52,6 @@ define(['jquery', 'modules/tv'], function($, tv) {
     };
     
     ytplayer.loadPlayList = function() {
-        console.log("!!!!!!!!!!!!!!!!!!!!!!11");
         if (! ytplayer.player)
             console.log("BIG problem");
         
@@ -83,13 +76,8 @@ define(['jquery', 'modules/tv'], function($, tv) {
             case "index":
                 if (!tv.playList.length)
                     return;
-               // var i = ytplayer.player.getPlaylistIndex();
-                //console.log("=========== " + i);
-               
-                //if (i < 0)
-                //    ytplayer.loadPlayList();
                 ytplayer.player.playVideoAt(value);
-                brefile:///home/zakiya/projects/tvRemote/control.html#ak;
+                break;
 	};
     };
     
