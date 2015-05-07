@@ -16,6 +16,15 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             list.videoList.on('click', 'li a.delete', list.clickDeleteVideo);
 	};
         
+        list.highLightItem = function(index) {
+            list.videoList.find("a").css("background", "none");
+
+            var videoId = control.playList[index];
+            var selector = "li[data-videoId=" + videoId + "]";
+            var listItem = list.videoList.find(selector);
+            listItem.find("a").css("background-color", "#555");
+        };
+        
         list.clickItem = function() {
             var listItem = $(this).parent("li");
             
@@ -26,6 +35,8 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             var videoId = listItem.attr("data-videoId");
             control.clickItem(videoId);
             ui.slide();
+            var index = control.playList.indexOf(videoId);
+            ui.highLightItem(index);
         };
         
         list.clickAddVideo = function() {
@@ -132,6 +143,23 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             if (task === 'delete')
                 list.deleteVideo(videoId);
         };
+        
+        list.updateValueByControl = function(key, value) {
+            
+            switch(key) {
+                case "index":
+                    list.highLightItem(value);
+            };
+        };
+        
+        list.updateByUi = function(key, value) {
+            
+            switch(key) {
+                case "index":
+                    list.highLightItem(value);
+            };
+        };
+        
         
         return list;
 });

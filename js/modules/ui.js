@@ -170,6 +170,13 @@ define(["modules/control", "jquery"], function(control, $) {
             
             var videoId = listItem.attr("data-videoId");
             control.clickItem(videoId);
+            
+            var index = control.playList.indexOf(videoId);
+            ui.updateByUiCallback("index", index);
+        };
+        
+        ui.setUpdateByUiCallback = function(callback) {
+            ui.updateByUiCallback = callback;
         };
             
         ui.clickNext = function() {

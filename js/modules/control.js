@@ -61,6 +61,7 @@ define(["modules/backEnd"], function(backEnd) {
             
             control[key] = value;
             control.uiValueCallback(key, value);
+            control.uiValueCallback2(key, value);
         };
     
         control.updateListByBackEnd = function(task, videoId) {
@@ -84,6 +85,10 @@ define(["modules/backEnd"], function(backEnd) {
         /// setter methods //////////////////
         control.setUiValueCallback = function(callback) {
             control.uiValueCallback = callback;
+        };
+        
+        control.setUiValueCallback2 = function(callback) {
+            control.uiValueCallback2 = callback;
         };
         
         control.setUiListCallback = function(callback) {
