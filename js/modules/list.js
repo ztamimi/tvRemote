@@ -25,8 +25,14 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
         
         list.clickAddVideo = function() {
             var videoId = list.getVideoId();
-            list.addVideo(videoId);
-            control.addVideo(videoId);
+            list.urlInput.value = "";
+
+            if (control.playList.indexOf(videoId) >= 0)  // video already exists
+                return;
+            else {
+                list.addVideo(videoId);
+                control.addVideo(videoId);
+            }
         };
         
         list.clickDeleteVideo = function() {
@@ -47,23 +53,34 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
         
         list.getVideoId = function() {
             var url = list.urlInput.value;
+            var temp = url.toLowerCase();
+            
             if (!url)
                 return;
-            var temp = url.split("://")[1];
-            if (!temp)
-                return;
-            var site = temp.split("?")[0];
-            if (site.toLowerCase() !== "www.youtube.com/watch") {
-                console.log("invalid youtube url");
-                return;
+            
+            if (temp.indexOf("youtube.com") >= 0) {
+                var param = url.split("?")[1].split("v=")[1].split("&")[0];
+                return param;
             }
-            var param = url.split("?")[1].split("v=")[1].split("&")[0];
-            return param;
+            
+            if (temp.indexOf("youtu.be") >= 0) {
+                var param = url.split(".")[1].split("/")[1]
+                return param;
+            }
+
+            console.log("invalid youtube url");
+            return;
+            //var temp = url.split("://")[1];
+            //if (!temp)
+            //    return;
+            //var site = temp.split("?")[0];
+            //var site = url.split(".")[1];
+            //if (site.toLowerCase() !== "youtube") 
+            
+            
         };
         
-        list.addVideo = function(videoId) {
-            list.urlInput.value = "";
-           
+        list.addVideo = function(videoId) {           
             var item = $("<li>", {'data-videoId': videoId});
             var link = $("<a>", {href: '#', class: 'data'});
             var thumb = $("<img>", {src: list.imgUrl});
