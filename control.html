@@ -1,13 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
-<title>controller</title>
-<link rel="stylesheet" type="text/css" href="css/btn.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <title>MoboRemote</title>
+    <link rel="stylesheet" type="text/css" href="css/btn.css">
 </head>
 
     <body>
+        <div data-role="page" id="search" data-theme='b'>        
+            <div data-role="header" data-position="fixed" data-theme="b">
+                <form>
+                    <table>
+                        <td width="90%"><input id="searchKeyword" placeholder='search...' type="text"/></td>
+                        <td><input type="button" id="searchBtn" value="search"></td>
+                    </table>
+                </form>
+            </div>
+        
+            <div data-role="content" data-theme='b'>
+                <ul id="searchResult" data-role="listview" class="ui-overlay-shadow" data-split-icon="plus">
+                </ul>
+            </div>
+            <div data-role="footer" data-position="fixed" data-theme='b'>
+                <nav data-role="navbar">
+                    <ul>
+                        <li><a data-icon="plus" href="#playList"></a></li>
+                        <li><a data-icon="grid" href="#remote"></a></li>
+                        <li><a data-icon="info" href="#info"></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
         
         <!-- ################################################ -->
         <div data-role="page" id="playList" data-theme='b'>
@@ -26,9 +50,9 @@
                 <div data-role="footer" data-position="fixed">
                     <nav data-role="navbar">
                         <ul>
+                            <li><a data-icon="search" href="#search"></a></li>
                             <li><a data-icon="grid" href="#remote"></a></li>
                             <li><a data-icon="info" href="#info"></a></li>
-                            <li><a data-icon="mail" href="#contact"></a></li>
                         </ul>
                     </nav>
                 </div>
@@ -69,8 +93,8 @@
                     <nav data-role="navbar">
                         <ul>
                             <li><a data-icon="plus" href="#playList"></a></li>
+                            <li><a data-icon="search" href="#search"></a></li>
                             <li><a data-icon="info" href="#info"></a></li>
-                            <li><a data-icon="mail" href="#contact"></a></li>
                         </ul>
                     </nav>
                 </div>
@@ -89,26 +113,7 @@
                         <ul>
                             <li><a data-icon="plus" href="#playList"></a></li>
                             <li><a data-icon="grid" href="#remote" ></a></li>
-                            <li><a data-icon="mail" href="#contact"></a></li>
-                        </ul>
-                    </nav>
-                </div>
-        </div>
-        
-        <!-- ################################################ -->
-        <div data-role="page" id="contact" data-theme='a'>
-                <div data-role="header" data-position="fixed">
-                    <h1>Contact</h1>
-                </div>
-                <div data-role="content">
-                    
-                </div>
-                <div data-role="footer" data-position="fixed">
-                    <nav data-role="navbar">
-                        <ul>
-                            <li><a data-icon="plus" href="#playList"></a></li>
-                            <li><a data-icon="grid" href="#remote" ></a></li>
-                            <li><a data-icon="info" href="#info"></a></li>
+                            <li><a data-icon="search" href="#search"></a></li>
                         </ul>
                     </nav>
                 </div>

@@ -3,13 +3,18 @@ require.config({
     
     paths: {
         "firebase": "http://cdn.firebase.com/js/client/2.2.2/firebase",
-        "jquery": "http://code.jquery.com/jquery-1.11.1.min"
+        "jquery": "http://code.jquery.com/jquery-1.11.1.min",
+        "jqueryMobile": "http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min"
     }
 });
 
+requirejs(["jquery"]);
+requirejs(["jqueryMobile"]);
+
 require(['modules/backEnd', 'modules/tv', 'modules/ytplayer'], function(backEnd, tv, ytplayer) {
-    
+   
     ytplayer.init();
+    
     tv.setUiValueCallback(ytplayer.updateValueByTv);
     tv.setUiListCallback(ytplayer.updateListByTv);
     

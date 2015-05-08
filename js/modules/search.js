@@ -1,51 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <title>MoboRemote</title>   
-</head>
-
-<body>
-    <div data-role="page" id="search" data-theme='b'>        
-        <div data-role="header" data-position="fixed" data-theme="b">
-            <form>
-                <table>
-                    <td width="90%"><input id="searchKeyword" placeholder='search...' type="text"/></td>
-                    <td><input type="button" id="searchBtn" value="search"></td>
-                </table>
-            </form>
-        </div>
-        
-        <div data-role="content" data-theme='b'>
-            
-            <ul id="searchResult" data-role="listview" class="ui-overlay-shadow" data-split-icon="plus">
-            </ul>
-                                      
-        </div>
-    
-        <div data-role="footer" data-position="fixed" data-theme='b'>
-
-        </div>
-    </div>
-        
-    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-
-    <script>
-
+// search object
+define(["modules/list", "modules/ui"], function(list, ui) {
     var search = {};
+    
     search.init = function() {
         search.list = $("#searchResult");
         search.keyword = $("#searchKeyword");
     
         $("#searchBtn").on('click', search.clickSearch);
+        search.list.on('click', 'li a.add', search.clickAddVideo);
+
     };
     
     search.clickSearch = function() {
         var keyword = search.keyword.val();
         console.log(keyword);
         search.search(keyword);
+    };
+    
+    search.clickAddVideo = function() {
+        var searchItem = $(this).parent('li');
+        var videoId = searchItem.attr("data-videoId");
+        var title = searchItem.find("p").text();
+        var imgUrl = searchItem.find("img").attr("src");
+        list.addSearchResult(videoId, title, imgUrl);
+        ui.addSearchResult(videoId, title, imgUrl);
     };
     
     search.search = function (keyword) {
@@ -76,15 +54,11 @@
                                         item.append(link);
                                         item.append(icon);
                                         
-                                        search.list.append(item);
+                                        search.list.append(item);                                        
                                     }
                                     search.list.listview("refresh");
                     });                                 
     };
-    search.init();
-
-    </script>
-
-</body>
-
-</html>
+    
+    return search;
+});

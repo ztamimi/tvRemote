@@ -1,28 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+    <title>MoboRemote</title>   
 </head>
 
 <body>
-                    
-    <div>
-        <label for="url">url: </label>
-        <input type="url" id="url" placeholder="copy the url of a youtube video here ...  ">
-        <input type="button" id="addUrl" value="Add Video">
-    </div>
-    
-    <br>
-    
-    <div id="player"></div>
-                                      
-    <div>
-        <label for="sessionId">Session ID: </label>
-        <h3 id="sessionId">test</h3>
-    </div>
+    <div data-role="page" id="tv" data-theme='b'>        
+        <div data-role="header" data-position="fixed" data-theme="b">
 
-    <div id="video-data-1"></div>
-    <ul id="video-data-2"></ul>
+        </div>
+        
+        <div data-role="content" data-theme='b'>
+            <div id="player"></div>
+                                      
+        </div>
+    
+        <div data-role="footer" data-position="fixed" data-theme='b'>
+
+        </div>
+    </div>
     
     <script src="js/require.js" data-main="js/main"></script>
     

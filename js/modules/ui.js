@@ -138,7 +138,20 @@ define(["modules/control", "jquery"], function(control, $) {
             ui.list.css({width: totalWidth});
             return (img);
         };
-            
+        
+        ui.addSearchResult = function(videoId, titleText, imgUrl) {
+            var item = $("<li>", {'data-videoId': videoId});
+            var link = $("<a>", {href: '#'});
+            var img = $("<img>", {src: imgUrl, class: "slideImg"});
+            link.append(img);
+            item.append(link);
+            item.appendTo(ui.list);
+            var imgNum = ui.list.children().size();
+            var totalWidth = imgNum * ui.imageWidth;
+            ui.list.css({width: totalWidth});
+        };
+
+        
         ui.removeCarouselItem = function(videoId) {
             var item = $("li[data-videoId*=" + videoId + "]")[0];
             item.remove();

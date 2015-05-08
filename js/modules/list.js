@@ -17,6 +17,9 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
 	};
         
         list.highLightItem = function(index) {
+            if (!list.videoList)
+                return;
+            
             list.videoList.find("a").css("background", "none");
 
             var videoId = control.playList[index];
@@ -40,6 +43,9 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
         };
         
         list.clickAddVideo = function() {
+            if (!list.videoList)
+                return;
+            
             var videoId = list.getVideoId();
             list.urlInput.value = "";
 
@@ -96,7 +102,27 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             
         };
         
-        list.addVideo = function(videoId) {           
+        list.addSearchResult = function(videoId, titleText, imgUrl) {
+            var item = $("<li>", {'data-videoId': videoId});
+            var link = $("<a>", {href: '#', class: 'data'});
+            var thumb = $("<img>", {src: imgUrl});
+            var title = $("<p></p>").text(titleText);
+            var icon = $("<a>", {href:'', class:'delete ui-btn ui-btn-icon-notext ui-icon-delete', title:'Delete'});
+            link.append(thumb);
+            link.append(title);
+            item.append(link);
+            item.append(icon);
+            item.appendTo("#videoList");
+            $("#videoList").listview( "refresh");
+            control.addVideo(videoId);
+        };
+
+        
+        list.addVideo = function(videoId) {
+            
+            if (!list.videoList)
+                return;
+            
             var item = $("<li>", {'data-videoId': videoId});
             var link = $("<a>", {href: '#', class: 'data'});
             var thumb = $("<img>", {src: list.imgUrl});
@@ -159,7 +185,6 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
                     list.highLightItem(value);
             };
         };
-        
         
         return list;
 });
