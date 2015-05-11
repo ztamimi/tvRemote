@@ -8,7 +8,6 @@ define(["modules/list", "modules/ui"], function(list, ui) {
     
         $("#searchBtn").on('click', search.clickSearch);
         search.list.on('click', 'li a.add', search.clickAddVideo);
-
     };
     
     search.clickSearch = function() {

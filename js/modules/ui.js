@@ -5,6 +5,7 @@ define(["modules/control", "jquery"], function(control, $) {
 	ui.init = function() {
             console.log("ui.init");
             ui.volInput = $('#volume').val(50).slider();
+            
             ui.speakerBtn = $('#speaker');
             ui.speakerImg = $('#speakerImg');
                         
@@ -14,9 +15,11 @@ define(["modules/control", "jquery"], function(control, $) {
             ui.carousel = $("#carousel");
             ui.list = $("#carousel ul");
             
-            ui.initCarousel();
-
             ui.registerEvents();
+            
+            //ui.initPlayPauseBtn();
+            //ui.initVolumeSlider();
+            ui.initCarousel();
 	};
         
 	ui.registerEvents = function() {
@@ -28,9 +31,24 @@ define(["modules/control", "jquery"], function(control, $) {
                 ui.carousel.on("swiperight", ui.clickBack);
                 ui.carousel.on("swipeleft", ui.clickNext);
                 ui.list.on('click', 'li a', ui.clickItem);
+                
+                // device orientation 
+                $( window ).on( "orientationchange", function( event ) {
+                    console.log("orientation change");
+                    ui.initCarousel();
+                });
 	};
         
         /////////// ui methods //////////////
+        
+        ui.initPlayPauseBtn = function() {
+            ui.setPlayPause(false);
+            control.updateByUi("play", false);
+        }
+        
+        ui.initVolumeSlider = function() {
+            ui.changeVolumeSlider();
+        }
         
         ui.clickPlayPauseBtn = function() {
             if (ui.playPauseBtn.attr('data-play') === "play") {
@@ -80,6 +98,12 @@ define(["modules/control", "jquery"], function(control, $) {
                     
                 case "index":
                     ui.highLightItem(value);
+                    break;
+                
+                case "videoId":
+                    var index = control.playList.indexOf(value);
+                    ui.highLightItem(index);
+                    break;
             };
         };
         
@@ -113,16 +137,24 @@ define(["modules/control", "jquery"], function(control, $) {
             
         ui.initCarousel = function() {
             var w = window.innerWidth;
-            $("#carousel").css({width: w});
             
-            //ui.imageNum = 3;
             ui.imageWidth = 120;
             ui.imageNum = parseInt(w/ui.imageWidth);
             if (ui.imageNum < 3) {
                 ui.imageNum = 3;
                 ui.imageWidth = parseInt(w/ui.imageNum);
             }
-            //ui.imageWidth = parseInt(w/ui.imageNum);
+            var k = ui.imageWidth * ui.imageNum;
+            $("#carousel").css({width: k});
+            
+            var images = ui.list.children(); //$("#carousel").find("img[class='slideImg']").
+            
+            images.css({width: ui.imageWidth});
+            
+            var imgNum = images.size();
+            
+            var totalWidth = ui.imageWidth * imgNum;
+            ui.list.css({width: totalWidth});            
         };
             
         ui.addToCarousel = function(videoId) {
@@ -151,7 +183,6 @@ define(["modules/control", "jquery"], function(control, $) {
             ui.list.css({width: totalWidth});
         };
 
-        
         ui.removeCarouselItem = function(videoId) {
             var item = $("li[data-videoId*=" + videoId + "]")[0];
             item.remove();
@@ -180,12 +211,15 @@ define(["modules/control", "jquery"], function(control, $) {
             ui.list.find("li").css("background", "none");
             
             listItem.css("background", "#555");
-            
+            ui.setPlayPause(true);
+
             var videoId = listItem.attr("data-videoId");
             control.clickItem(videoId);
             
-            var index = control.playList.indexOf(videoId);
-            ui.updateByUiCallback("index", index);
+            //var index = control.playList.indexOf(videoId);
+            //ui.updateByUiCallback("index", index);
+
+            ui.updateByUiCallback("videoId", videoId);
         };
         
         ui.setUpdateByUiCallback = function(callback) {
@@ -193,11 +227,15 @@ define(["modules/control", "jquery"], function(control, $) {
         };
             
         ui.clickNext = function() {
+            if (ui.imageNum >= control.playList.length)
+                return;
             shift = '-' + ui.imageWidth;
             ui.list.animate({marginLeft: shift}, ui.nextCallback);
         };
             
         ui.clickBack = function() {
+            if (ui.imageNum >= control.playList.length)
+                return;
             ui.list.animate({marginLeft: ui.imageWidth}, ui.backCallback);
         };
             

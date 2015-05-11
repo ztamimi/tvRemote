@@ -30,5 +30,4 @@ require(['modules/uiConnect', 'modules/backEnd', 'modules/control', 'modules/ui'
     backEnd.setUpdateValueCallback(control.updateValueByBackEnd);
     backEnd.setUpdateListCallback(control.updateListByBackEnd);
     
-    control.set();
 });

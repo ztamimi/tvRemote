@@ -1,52 +1,51 @@
 // backEnd object
 define(["firebase"], function() {
-	var backEnd = {url: null, appName: null, sessionId: null, ref: null};
+	var backEnd = {};
         
 	backEnd.init = function() {
             var temp = backEnd.url + (backEnd.appName + '/' + backEnd.sessionId  + '/');
             
             backEnd.ref = new Firebase(temp);
+            backEnd.dataRef = backEnd.ref.child("data");
             backEnd.listRef = backEnd.ref.child("playList");
         };
         
-        backEnd.send = function(obj) {
-            backEnd.ref.update(obj);
+        backEnd.updateValue = function(obj) {
+            backEnd.dataRef.update(obj);
 	};
         
-        backEnd.push = function(value) {
-            //var listRef = backEnd.ref.child(list);
-            var obj = {};
-            obj[value] = 1;
-            backEnd.listRef.update(obj);
-        };
-        
-        backEnd.delete = function(key) {
-            //var listRef = backEnd.ref.child(list).child(key);
-            backEnd.listRef.child(key).remove();
-        };
-        
-	backEnd.receiveValue = function(snapshot) {
+        backEnd.valueUpdated = function(snapshot) {
             var value = snapshot.val();
             var key = snapshot.key();
         
             backEnd.updateValueCallback(key, value);
 	};
         
-        backEnd.receiveListAdd = function(snapshot) {
+        backEnd.addItem = function(key, value) {
+            var obj = {};
+            obj[key] = value;
+            backEnd.listRef.update(obj);
+        };
+        
+        backEnd.itemAdded = function(snapshot) {
             var value = snapshot.val();
             var key = snapshot.key();
             var task = 'add';
             
-            console.log("backEnd.receiveListAdd " + task + ":" + key);
-            backEnd.updateListCallback(task, key);
+            //console.log("backEnd.receiveListAdd " + task + ":" + key);
+            backEnd.updateListCallback(task, key, value);
         };
         
-        backEnd.receiveListDelete = function(snapshot) {
+        backEnd.deleteItem = function(key) {
+            backEnd.listRef.child(key).remove();
+        };
+        
+        backEnd.itemDeleted = function(snapshot) {
             var value = snapshot.val();
             var key = snapshot.key();
             var task = 'delete';
             
-            backEnd.updateListCallback(task, key);
+            backEnd.updateListCallback(task, key, value);
         };
         
         ////////// set methods ///////////////
@@ -64,14 +63,14 @@ define(["firebase"], function() {
         
         backEnd.setUpdateValueCallback = function(callback) {
             backEnd.updateValueCallback = callback;
-            backEnd.ref.on('child_added', backEnd.receiveValue); 
-            backEnd.ref.on('child_changed', backEnd.receiveValue);
+            backEnd.dataRef.on('child_added', backEnd.valueUpdated); 
+            backEnd.dataRef.on('child_changed', backEnd.valueUpdated);
         };
         
         backEnd.setUpdateListCallback = function(callback) {
             backEnd.updateListCallback = callback;
-            backEnd.listRef.on('child_added', backEnd.receiveListAdd);
-            backEnd.listRef.on('child_removed', backEnd.receiveListDelete);
+            backEnd.listRef.on('child_added', backEnd.itemAdded);
+            backEnd.listRef.on('child_removed', backEnd.itemDeleted);
         };
         
     return backEnd;

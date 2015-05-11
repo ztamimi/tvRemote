@@ -3,7 +3,9 @@ define(['jquery', 'modules/tv'], function($, tv) {
     var ytplayer = {};
     
     ytplayer.init = function() {
-        ytplayer.initPlayer("player");
+        ytplayer.width = window.innerWidth;
+        ytplayer.height = window.innerHeight;
+        ytplayer.initPlayer("player", "");
     };
         
     ytplayer.initPlayer = function(container, videoId) {
@@ -19,10 +21,11 @@ define(['jquery', 'modules/tv'], function($, tv) {
     };
     
     ytplayer.loadPlayer = function(container, videoId) {
+        console.log("************** player loaded *******************");
         ytplayer.player = new YT.Player(container, {
             videoId: videoId,
-            width: 640,
-            height: 480,
+            width: ytplayer.width,
+            height: ytplayer.height,
             events: {
                 'onReady': ytplayer.onPlayerReady,
 		'onStateChange': ytplayer.onStateChange
@@ -37,14 +40,23 @@ define(['jquery', 'modules/tv'], function($, tv) {
         
         console.log(ytplayer.player.getPlayerState());
         
-        var play = (ytplayer.player.getPlayerState() === 1);
-        tv.updateByUi("play", play);
-
+        var status = ytplayer.player.getPlayerState();
+        if (status === 1)       // playing
+            tv.updateByUi("play", true);
+        else 
+            if (status === 2)       // paused
+                tv.updateByUi("play", false);
+              
         var volume = parseInt(ytplayer.player.getVolume());        
         tv.updateByUi("volume", volume);
-            
-        var index = ytplayer.player.getPlaylistIndex();
-        tv.updateByUi("index", index);
+        
+        if (status === 3) {     // buffering
+            var index = ytplayer.player.getPlaylistIndex();
+            if (index < 0)
+                return;
+            var videoId = tv.playList[index];
+            tv.updateByUi("videoId", videoId);
+        }
     };
     
     ytplayer.onPlayerReady = function() {
@@ -53,13 +65,17 @@ define(['jquery', 'modules/tv'], function($, tv) {
     
     ytplayer.loadPlayList = function() {
         if (! ytplayer.player)
-            console.log("BIG problem");
+            return;
         
-        ytplayer.player.cuePlaylist(tv.playList);
+        var index = tv.playList.indexOf(tv.videoId);
+        if (index < 0)
+            index = 0;
+            
+        ytplayer.player.cuePlaylist(tv.playList, index);
     };  
 
     ytplayer.updateValueByTv = function(key, value) {
-        if (key === 'playList')
+        if (!ytplayer.player)
             return;
         
         switch(key) {
@@ -69,19 +85,23 @@ define(['jquery', 'modules/tv'], function($, tv) {
 		else
                     ytplayer.player.pauseVideo();
                 break;
+                
             case "volume":
                 ytplayer.player.setVolume(value);
                 break;
-                
-            case "index":
-                if (!tv.playList.length)
+            
+            case "videoId":
+                var index = tv.playList.indexOf(value);
+                if (index < 0)
                     return;
-                ytplayer.player.playVideoAt(value);
-                break;
+                ytplayer.player.playVideoAt(index);
 	};
     };
     
     ytplayer.updateListByTv = function(key, value) {
+        if (!ytplayer.player)
+            return;
+        
         var status = ytplayer.player.getPlayerState();
         if (status === 1 || status === 2) {
             var i = ytplayer.player.getPlaylistIndex();

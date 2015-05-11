@@ -8,6 +8,8 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             list.videoList = $("#videoList");
             
             list.registerEvents();
+            
+            list.initVideoList();
 	};
 
 	list.registerEvents = function() {
@@ -15,6 +17,10 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             list.videoList.on('click', 'li a.data', list.clickItem);
             list.videoList.on('click', 'li a.delete', list.clickDeleteVideo);
 	};
+        
+        list.initVideoList = function() {
+            list.videoList.listview();
+        };
         
         list.highLightItem = function(index) {
             if (!list.videoList)
@@ -33,8 +39,9 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             
             $("#videoList li").find("a").css("background-color", "");
             
-            listItem.find("a").css("background-color", "#555");//.attr("style", "border: silver solid 1px; border-radius: 5px");
-            
+            listItem.find("a").css("background-color", "#555");
+            ui.setPlayPause(true);
+
             var videoId = listItem.attr("data-videoId");
             control.clickItem(videoId);
             ui.slide();
@@ -117,7 +124,6 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             control.addVideo(videoId);
         };
 
-        
         list.addVideo = function(videoId) {
             
             if (!list.videoList)
@@ -152,16 +158,9 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
                                     title.text(data.items[0].snippet.title);
                                     thumb.attr("src", data.items[0].snippet.thumbnails.default.url);
                                     slideImg.attr("src", data.items[0].snippet.thumbnails.default.url);
-
                     }); 
                                 
         };    
-            /*.fail(function(jqXHR, textStatus, errorThrown) {
-                                    console.log("getJSON error");
-                                    return null;
-					//$("<p style='color: #F00;'></p>").text(jqXHR.responseText || errorThrown).appendTo("#video-data-1");
-				});*/
-        
         
         list.updateListByControl = function(task, videoId) {
             if (task === 'add') 
@@ -171,10 +170,15 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
         };
         
         list.updateValueByControl = function(key, value) {
-            
             switch(key) {
                 case "index":
                     list.highLightItem(value);
+                    break;
+                    
+                case "videoId":
+                    var index = control.playList.indexOf(value);
+                    list.highLightItem(index);
+                    break;
             };
         };
         
@@ -183,6 +187,12 @@ define(["modules/control", "modules/ui", "jquery"], function(control, ui, $) {
             switch(key) {
                 case "index":
                     list.highLightItem(value);
+                    break;
+                    
+                case "videoId":
+                    var index = control.playList.indexOf(value);
+                    list.highLightItem(index);
+                    break;
             };
         };
         

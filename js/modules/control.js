@@ -3,24 +3,25 @@ define(["modules/backEnd"], function(backEnd) {
 	var control = {};
         
 	control.init = function() {
-            //control.set();
+            control.play = null;
+            control.volume = null;
+            control.videoId = null;
+            control.playList = [];
 	};
         
         control.set = function () {
             control.updateByUi('volume', 50);
             control.updateByUi('play', false);
             control.updateByUi('index', 0);
-            //control.updateByUi('length', 0);
-            //control.updateByUi('fullscreen', false);
-            control.playList = [];
+            
+            //control.playList = [];
         };
         
         control.addVideo = function(videoId) {
             if (control.playList.indexOf(videoId) >= 0) // video does exist in list
                 return;
             control.playList.push(videoId);
-            backEnd.push(videoId);
-            //control.updateByUi('length', control.playList.length);
+            backEnd.addItem(videoId, 1);
         };
         
         control.deleteVideo = function(videoId) {
@@ -28,8 +29,7 @@ define(["modules/backEnd"], function(backEnd) {
             if (index < 0)
                 return;
             control.playList.splice(index, 1);
-            backEnd.delete(videoId);
-            //control.updateByUi('length', control.playList.length);
+            backEnd.deleteItem(videoId);
         };
         
         control.updateByUi = function(key, value) {
@@ -42,19 +42,20 @@ define(["modules/backEnd"], function(backEnd) {
             
             var obj = {}; 
             obj[key] = control[key];
-            backEnd.send(obj);
+            backEnd.updateValue(obj);
         };
 
         control.clickItem = function(videoId) {
             var index = control.playList.indexOf(videoId);
             if (index < 0)
                 return;
-            control.updateByUi("index", index);
+            
+            control.updateByUi("videoId", videoId);
+            control.updateByUi("play", true);
+
         };
         
         control.updateValueByBackEnd = function(key, value) {
-            if (key == "playList")
-                return;
             console.log(key + ":" + value);
             if (control[key] === value)
                 return;
@@ -64,8 +65,9 @@ define(["modules/backEnd"], function(backEnd) {
             control.uiValueCallback2(key, value);
         };
     
-        control.updateListByBackEnd = function(task, videoId) {
-            console.log("control.updateListByBackEnd: "+ task + ":" + videoId);
+        control.updateListByBackEnd = function(task, key, value) {
+            //console.log("control.updateListByBackEnd: "+ task + ":" + videoId);
+            var videoId = key;
             if (task === 'add') {
                 if (control.playList.indexOf(videoId) >= 0) // video does exist in list
                     return;
@@ -94,7 +96,6 @@ define(["modules/backEnd"], function(backEnd) {
         control.setUiListCallback = function(callback) {
             control.uiListCallback = callback;
         };
-        
         
     return control;
 });

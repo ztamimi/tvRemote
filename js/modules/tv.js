@@ -3,24 +3,29 @@ define(["modules/backEnd"], function(backEnd) {
 	var tv = {};
         
 	tv.init = function() {
-            tv.index = 0;
+            //tv.index = 0;
+            tv.videoId = null;
+            
             tv.playList = [];
-            tv.volume = 100;
-            tv.play = false;
+            //tv.volume = 100;
+            tv.volume = null;
+            
+            //tv.play = false;
+            tv.play = null;
 	};
-        
+        /*
         tv.set = function (volume, play, index) {
             tv.updateByUi('volume', volume);
             tv.updateByUi('play', play);
             tv.updateByUi('index', index);
             tv.playList = [];
         };
-        
+        */
         tv.addVideo = function(videoId) {
             if (tv.playList.indexOf(videoId) >= 0) // video does exist in list
                 return;
             tv.playList.push(videoId);
-            backEnd.push(videoId);
+            backEnd.addItem(videoId);
         };
         
         tv.deleteVideo = function(videoId) {
@@ -28,7 +33,7 @@ define(["modules/backEnd"], function(backEnd) {
             if (index < 0)
                 return;
             tv.playList.splice(index, 1);
-            backEnd.delete(videoId);
+            backEnd.deleteItem(videoId);
         };
         
         tv.updateByUi = function(key, value) {
@@ -41,19 +46,19 @@ define(["modules/backEnd"], function(backEnd) {
             
             var obj = {}; 
             obj[key] = tv[key];
-            backEnd.send(obj);
+            backEnd.updateValue(obj);
         };
 
         tv.clickItem = function(videoId) {
             var index = tv.playList.indexOf(videoId);
             if (index < 0)
                 return;
-            tv.updateByUi("index", index);
+            //tv.updateByUi("index", index);
+            tv.updateByUi("videoId", videoId);
         };
         
         tv.updateValueByBackEnd = function(key, value) {
-            if (key == "playList")
-                return;
+            
             console.log(key + ":" + value);
             if (tv[key] === value)
                 return;
@@ -62,7 +67,7 @@ define(["modules/backEnd"], function(backEnd) {
             tv.uiValueCallback(key, value);
         };
     
-        tv.updateListByBackEnd = function(task, videoId) {
+        tv.updateListByBackEnd = function(task, videoId, value) {
             console.log("tv.updateListByBackEnd: "+ task + ":" + videoId);
             if (task === 'add') {
                 if (tv.playList.indexOf(videoId) >= 0) // video does exist in list
