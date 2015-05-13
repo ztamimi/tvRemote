@@ -33,7 +33,7 @@ define(["modules/control", "jquery"], function(control, $) {
                 ui.list.on('click', 'li a', ui.clickItem);
                 
                 // device orientation 
-                $( window ).on( "orientationchange", function( event ) {
+                $( window ).on( "orientationchange resize", function( event ) {
                     console.log("orientation change");
                     ui.initCarousel();
                 });

@@ -13,6 +13,7 @@ define(["modules/list", "modules/ui"], function(list, ui) {
     search.clickSearch = function() {
         var keyword = search.keyword.val();
         console.log(keyword);
+        search.list.empty();
         search.search(keyword);
     };
     

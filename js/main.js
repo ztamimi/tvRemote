@@ -14,6 +14,10 @@ requirejs(["jqueryMobile"]);
 require(['modules/backEnd', 'modules/tv', 'modules/ytplayer'], function(backEnd, tv, ytplayer) {
    
     ytplayer.init();
+    ytplayer.setPlayerLoadedCallback(init);
+    
+    function init() {
+        console.log("player loaded **************");
     
     tv.setUiValueCallback(ytplayer.updateValueByTv);
     tv.setUiListCallback(ytplayer.updateListByTv);
@@ -30,5 +34,5 @@ require(['modules/backEnd', 'modules/tv', 'modules/ytplayer'], function(backEnd,
     
     backEnd.setUpdateValueCallback(tv.updateValueByBackEnd);
     backEnd.setUpdateListCallback(tv.updateListByBackEnd);
-    
+}
 });

@@ -28,6 +28,12 @@ define(["modules/backEnd"], function(backEnd) {
             var index = control.playList.indexOf(videoId); // video does not exist in list
             if (index < 0)
                 return;
+            if (videoId === control.videoId) {
+                var current = control.playList.indexOf(videoId);
+                var next = (current + 1) % control.playList.length;
+                control.videoId = control.playList[next];
+                control.updateByUi("videoId", control.videoId);
+            }
             control.playList.splice(index, 1);
             backEnd.deleteItem(videoId);
         };

@@ -6,12 +6,20 @@ define(['jquery', 'modules/tv'], function($, tv) {
         ytplayer.width = window.innerWidth;
         ytplayer.height = window.innerHeight;
         ytplayer.initPlayer("player", "");
+        $(window).on( "resize orientationchange", function(event) {
+                console.log("resize");
+                var width = window.innerWidth;
+                var height = window.innerHeight;
+                if (ytplayer.player)
+                    ytplayer.player.setSize(width, height);
+            });
     };
         
     ytplayer.initPlayer = function(container, videoId) {
         if (typeof(YT) == 'undefined' || typeof(YT.Player) == 'undefined') {
             window.onYouTubeIframeAPIReady = function() {
-                ytplayer.loadPlayer(container, videoId);
+                if ($("#player"))
+                    ytplayer.loadPlayer(container, videoId);
             };
             $.getScript('http://www.youtube.com/iframe_api');
         } 
@@ -33,6 +41,7 @@ define(['jquery', 'modules/tv'], function($, tv) {
         // For a list of all parameters, see:
         // https://developers.google.com/youtube/player_parameters
         });
+        ytplayer.playerLoadedCallback();
     };
     
     ytplayer.onStateChange = function() {
@@ -68,11 +77,23 @@ define(['jquery', 'modules/tv'], function($, tv) {
             return;
         
         var index = tv.playList.indexOf(tv.videoId);
-        if (index < 0)
+        if (index < 0) {
             index = 0;
+            tv.updateByUi("videoId", tv.playList[index]);
+        }
             
         ytplayer.player.cuePlaylist(tv.playList, index);
     };  
+
+    ytplayer.playVideo = function() {
+        if (!tv.playList.length)
+            return;
+        if (tv.playList.indexOf(tv.videoId) < 0) {
+            tv.videoId = tv.playList[0];
+            tv.updateByUi("videoId", tv.playList[0]);
+        }
+        ytplayer.player.playVideo();
+    };
 
     ytplayer.updateValueByTv = function(key, value) {
         if (!ytplayer.player)
@@ -81,7 +102,9 @@ define(['jquery', 'modules/tv'], function($, tv) {
         switch(key) {
             case "play":
                 if (value)
-                    ytplayer.player.playVideo();
+                    ytplayer.playVideo();
+//
+                    //ytplayer.player.playVideo();
 		else
                     ytplayer.player.pauseVideo();
                 break;
@@ -114,6 +137,10 @@ define(['jquery', 'modules/tv'], function($, tv) {
         }
         else
             ytplayer.loadPlayList();
+    };
+    
+    ytplayer.setPlayerLoadedCallback = function(callback) {
+        ytplayer.playerLoadedCallback = callback;
     };
     
     return ytplayer;
